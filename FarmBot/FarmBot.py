@@ -141,8 +141,6 @@ class FarmBot:
             upgrades = Upgrades(self.log, self.http, self.account_name, profile)
             upgrades.perform_upgrades()
 
-            self.log.info("Loop completed.")
-
         except Exception as e:
             self.log.error(
                 f"⭕ <r>Failed to farm for account <c>{self.account_name}</c>!</r>"

@@ -93,7 +93,9 @@ class City:
                 url="miniapps/api/mine_active/JoinMineAcctive",
                 data=payload,
             )
-            if not res or res.get("code", -999) != 0 or res.get("msg") != "OK":
+            if not res:
+                raise Exception("RESPONSE_IS_NULL")
+            elif res and (res.get("code") != 0 or res.get("msg") != "OK"):
                 error_message = res.get(
                     "msg", "Unknown error occurred while solving daily combo."
                 )

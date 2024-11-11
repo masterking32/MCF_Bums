@@ -18,22 +18,23 @@ class Store:
 
     def _get_props(self, page_type, page_num: int = 1, page_size: int = 10):
         try:
-            res: dict = self.http.get(
+            resp: dict = self.http.get(
                 url=f"miniapps/api/prop_shop/Lists?showPages={page_type}&page={page_num}&pageSize={page_size}",
             )
 
-            if (
-                res is None
-                or res.get("code", -1) != 0
-                or "data" not in res
-                or res.get("msg", False) != "OK"
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (
+                resp.get("code") != 0
+                or "data" not in resp
+                or resp.get("msg") != "OK"
             ):
-                error_message = res.get(
+                error_message = resp.get(
                     "msg", "Unknown error occurred while fetching prop data."
                 )
                 raise Exception(error_message)
 
-            return res.get("data", None)
+            return resp.get("data", None)
 
         except Exception as e:
             self.log.error(
@@ -111,13 +112,15 @@ class Store:
                 "num": 1,
                 "propShopSellId": sell_id,
             }
-            res: dict = self.http.post(
+            resp: dict = self.http.post(
                 url="miniapps/api/prop_shop/CreateGptPayOrder",
                 data=payload,
             )
 
-            if not res:
-                error_message = res.get(
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+                error_message = resp.get(
                     "msg", "Unknown error occurred while making prop order."
                 )
                 raise Exception(error_message)
@@ -140,25 +143,27 @@ class Store:
             if is_box:
                 url = "miniapps/api/game_spin/Start"
 
-            res: dict = self.http.post(
+            resp: dict = self.http.post(
                 url=url,
                 data=payload,
             )
 
-            if res is None or (
-                (not is_box and (res.get("code") != 0 or res.get("msg") != "OK"))
-                or (is_box and not res.get("rewardLists"))
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (
+                (not is_box and (resp.get("code") != 0 or resp.get("msg") != "OK"))
+                or (is_box and not resp.get("rewardLists"))
             ):
-                error_message = res.get(
+                error_message = resp.get(
                     "msg", "Unknown error occurred while applying prop."
                 )
                 raise Exception(error_message)
 
             if is_box:
-                reward_list = res.get("rewardLists", [])
+                reward_list = resp.get("rewardLists", [])
                 if reward_list:
                     reward = reward_list[0].get("name", "")
-                    self.log.error(
+                    self.log.info(
                         f"<g>Box reward <y>{reward}</y> for <c>{self.account_name}</c>!</g>"
                     )
 
@@ -204,13 +209,15 @@ class Store:
                     "9TOkLN1L"
                 ),  # "c95ebdec8c444b604bb21ae73c3912c4",  # 9TOkLN1L = blum_ref_code.split("_")[1] to md5 32 -
             }
-            res: dict = self.http.post(
+            resp: dict = self.http.post(
                 url="miniapps/api/linkage/claim_skin_blum",
                 data=payload,
             )
 
-            if res is None or res.get("code") != 0 or res.get("msg") != "OK":
-                error_message = res.get(
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+                error_message = resp.get(
                     "msg", "Unknown error occurred while getting blum reward skin."
                 )
                 raise Exception(error_message)

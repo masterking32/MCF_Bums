@@ -42,7 +42,9 @@ class Gangs:
                 url="miniapps/api/gang/gang_lists",
                 data=payload,
             )
-            if not resp or resp.get("code", -999) != 0 or resp.get("msg") != "OK":
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
                     "msg", "Unknown error occurred while getting gangs."
                 )
@@ -71,7 +73,9 @@ class Gangs:
                 url="miniapps/api/gang/gang_join",
                 data=payload,
             )
-            if not resp or resp.get("code", -999) != 0 or resp.get("msg") != "OK":
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
                     "msg",
                     f"Unknown error occurred while joining gang <y>{gang_name}</y>.",
@@ -90,7 +94,9 @@ class Gangs:
     def leave_gang(self):
         try:
             resp: dict = self.http.get(url="miniapps/api/gang/gang_leave")
-            if not resp or resp.get("code", -999) != 0 or resp.get("msg") != "OK":
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
                     "msg", f"Unknown error occurred while leaving gang."
                 )

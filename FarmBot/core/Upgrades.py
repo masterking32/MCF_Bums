@@ -22,23 +22,24 @@ class Upgrades:
 
     def _get_upgrades(self):
         try:
-            res: dict = self.http.post(
+            resp: dict = self.http.post(
                 url="miniapps/api/mine/getMineLists",
                 use_boundary=False,
             )
 
-            if (
-                res is None
-                or res.get("code", -1) != 0
-                or "data" not in res
-                or res.get("msg", False) != "OK"
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (
+                resp.get("code") != 0
+                or "data" not in resp
+                or resp.get("msg") != "OK"
             ):
-                error_message = res.get(
+                error_message = resp.get(
                     "msg", f"Unknown error occurred while getting upgrades."
                 )
                 raise Exception(error_message)
 
-            upgrades_list = res.get("data", {}).get("lists", [])
+            upgrades_list = resp.get("data", {}).get("lists", [])
             if not upgrades_list or len(upgrades_list) < 1:
                 raise Exception(f"Server upgrade list is empty")
 
@@ -74,20 +75,18 @@ class Upgrades:
                 else "miniapps/api/user_game_level/upgradeLeve"
             )
             payload = {skill_type: skill.id}
-            res: dict = self.http.post(
+            resp: dict = self.http.post(
                 url=url,
                 data=payload,
             )
 
-            if not res or res.get("code", -999) != 0 or res.get("msg", False) != "OK":
-                if (
-                    res
-                    and "Insufficient balance" in res.get("msg", "")
-                    and res.get("code") == -1
-                ):
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+                if "Insufficient balance" in resp.get("msg"):
                     time.sleep(random.randint(1, 2))
                     return self._buy_upgrade(skill=skill, retries=retries - 1)
-                error_message = res.get(
+                error_message = resp.get(
                     "msg",
                     f"Unknown error occurred while buying {skill_desc} upgrade {skill.id}",
                 )

@@ -74,24 +74,24 @@ class Profile:
             if blum:
                 url += "9TOkLN1L"
             elif self.tgAccount and not blum:
-                url += self.tgAccount.ReferralToken.split("_") if "_" in self.tgAccount.ReferralToken else self.tgAccount.ReferralToken
+                ref_code = self.tgAccount.ReferralToken if self.tgAccount.NewStart else ""
+                url += ref_code.split("_")[1] if "_" in ref_code else ref_code
 
-            res: dict = self.http.get(
+            resp: dict = self.http.get(
                 url=url,
             )
 
-            if (
-                res is None
-                or res.get("code", -1) != 0
-                or "data" not in res
-                or res.get("msg", False) != "OK"
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (
+                resp.get("code") != 0 or "data" not in resp or resp.get("msg") != "OK"
             ):
-                error_message = res.get(
+                error_message = resp.get(
                     "msg", "Unknown error occurred while getting game data."
                 )
                 raise Exception(error_message)
 
-            self._data = res.get("data", {})
+            self._data = resp.get("data", {})
             self._user_profile = ProfileModel.UserProfile(self.data.get("userInfo", {}))
             self._game_profile = ProfileModel.GameProfile(self.data.get("gameInfo", {}))
             self._tap_data = ProfileModel.TapData(self.data.get("tapInfo", {}))
@@ -111,22 +111,23 @@ class Profile:
             self.log.info(f"Auyo daily checkin disabled.")
             return True
         try:
-            res: dict = self.http.get(
+            resp: dict = self.http.get(
                 url="miniapps/api/sign/getSignLists",
             )
 
-            if (
-                res is None
-                or res.get("code", -1) != 0
-                or "data" not in res
-                or res.get("msg", False) != "OK"
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (
+                resp.get("code") != 0
+                or "data" not in resp
+                or resp.get("msg", False) != "OK"
             ):
-                error_message = res.get(
+                error_message = resp.get(
                     "msg", "Unknown error occurred while checking daily checkin."
                 )
                 raise Exception(error_message)
 
-            checkin_data: dict = res.get("data", {})
+            checkin_data: dict = resp.get("data", {})
             is_checked_in = checkin_data.get("signStatus") == 1
             checkin_streak = checkin_data.get("signNum", -1)  # TODO: check if it wrong
             days = checkin_data.get("lists", [])
@@ -161,13 +162,15 @@ class Profile:
             payload = {
                 "": "undefined",
             }
-            res: dict = self.http.post(
+            resp: dict = self.http.post(
                 url="miniapps/api/sign/sign",
                 data=payload,
             )
 
-            if res is None or res.get("code", -1) != 0 or res.get("msg", False) != "OK":
-                error_message = res.get(
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+                error_message = resp.get(
                     "msg", "Unknown error occurred while performing daily checkin."
                 )
                 raise Exception(error_message)
@@ -203,17 +206,14 @@ class Profile:
             "collectSeqNo": collectSeqNo,
             "collectAmount": collectAmount,
         }
-        res: dict = self.http.post(
+        resp: dict = self.http.post(
             url="miniapps/api/user_game/collectCoin",
             data=payload,
         )
-        if (
-            res is None
-            or not res
-            or res.get("code", -1) != 0
-            or res.get("msg", False) != "OK"
-        ):
-            error_message = res.get(
+        if not resp:
+            raise Exception("RESPONSE_IS_NULL")
+        elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+            error_message = resp.get(
                 "msg", "Unknown error occurred while performing taps."
             )
             raise Exception(error_message)

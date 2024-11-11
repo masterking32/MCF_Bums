@@ -53,24 +53,25 @@ class Auth:
             if ref_code != "":
                 payload["invitationCode"] = ref_code
 
-            res: dict = self.http.post(
+            resp: dict = self.http.post(
                 url="miniapps/api/user/telegram_auth",
                 data=payload,
                 valid_response_code=[200, 201],
             )
 
-            if (
-                res is None
-                or res.get("code", -1) != 0
-                or "data" not in res
-                or res.get("msg", False) != "OK"
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (
+                resp.get("code") != 0
+                or "data" not in resp
+                or resp.get("msg") != "OK"
             ):
-                self.log.error(
-                    f"<r>❌ Failed to authorize user <c>{self.account_name}</c>! RESPONSE_IS_NULL</r>"
+                error_message = resp.get(
+                    "msg", "Unknown error occurred while applying prop."
                 )
-                return False
+                raise Exception(error_message)
 
-            self.auth_token = res.get("data", {}).get("token", None)
+            self.auth_token = resp.get("data", {}).get("token", None)
             self.http.auth_token = self.token
 
             self.log.info(

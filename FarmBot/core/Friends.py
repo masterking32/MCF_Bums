@@ -41,7 +41,9 @@ class Friends:
                 url="miniapps/api/user_game/friends",
                 data=payload,
             )
-            if not resp or resp.get("code", -999) != 0 or resp.get("msg") != "OK":
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
                     "msg", "Unknown error occurred while getting friends."
                 )
@@ -67,7 +69,9 @@ class Friends:
             resp: dict = self.http.get(
                 url="miniapps/api/wallet/balance",
             )
-            if not resp or resp.get("code", -999) != 0 or resp.get("msg") != "OK":
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
                     "msg", "Unknown error occurred while getting friends balance."
                 )
@@ -120,7 +124,9 @@ class Friends:
                 # url=f"miniapps/api/wallet/W{min_id}To{max_id}", # Not found
                 data=payload,
             )
-            if not resp or resp.get("code", -999) != 0 or resp.get("msg") != "OK":
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
                     "msg", "Unknown error occurred while claiming balance."
                 )

@@ -37,11 +37,14 @@ class Tasks:
             resp: dict = self.http.get(
                 url="miniapps/api/task/lists",
             )
-            if not resp or resp.get("code", -999) != 0 or resp.get("msg", "") != "OK":
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
                     "msg", "Unknown error occurred while getting tasks."
                 )
                 raise Exception(error_message)
+
             data = resp.get("data", {})
             self.task_mgr = TaskMgr(data)
             return True
@@ -307,7 +310,9 @@ class Tasks:
                 use_boundary=False,
                 data=payload,
             )
-            if not resp or resp.get("code", -999) != 0 or resp.get("msg", "") != "OK":
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
                     "msg", f"Unknown error occurred while finishing task {task.id}"
                 )
