@@ -74,7 +74,7 @@ class Profile:
             if blum:
                 url += "9TOkLN1L"
             elif self.tgAccount and not blum:
-                url += self.tgAccount.ReferralToken
+                url += self.tgAccount.ReferralToken.split("_") if "_" in self.tgAccount.ReferralToken else self.tgAccount.ReferralToken
 
             res: dict = self.http.get(
                 url=url,
