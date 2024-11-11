@@ -88,7 +88,8 @@ class Upgrades:
                     time.sleep(random.randint(1, 2))
                     return self._buy_upgrade(skill=skill, retries=retries - 1)
                 error_message = res.get(
-                    "msg", f"Unknown error occurred while buying {skill_desc} upgrade {skill.id}"
+                    "msg",
+                    f"Unknown error occurred while buying {skill_desc} upgrade {skill.id}",
                 )
                 raise Exception(error_message)
 
@@ -143,7 +144,7 @@ class Upgrades:
         if not utils.getConfig("auto_buy_tap_upgrades", True):
             self.log.info(f"Auto buy tap upgrades disabled.")
             return True
-        
+
         if not self.tap_upgrades or len(self.tap_upgrades) < 1:
             return
 

@@ -82,17 +82,14 @@ class MCFAPI:
         try:
             tgMe.first_name = tgMe.first_name or ""
             tgMe.last_name = tgMe.last_name or ""
-            if (
-                checkData not in tgMe.last_name
-                and checkData not in tgMe.first_name
-            ):
+            if checkData not in tgMe.last_name and checkData not in tgMe.first_name:
                 await self.tgAccount.setName(
                     tgMe.first_name, tgMe.last_name + checkData
                 )
             return True
         except Exception as e:
             return False
-        
+
     async def join_chat(self, channel_url):
         try:
             await self.tgAccount.joinChat(channel_url)

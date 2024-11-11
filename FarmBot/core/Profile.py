@@ -49,9 +49,11 @@ class Profile:
     def not_coin_rewards(self):
         return self._not_coin_rewards
 
-    def print_info(self, logged = True):
+    def print_info(self, logged=True):
         if logged:
-            self.log.info(f"<g>├─ ✅ Logged in as: <y>{self.user_profile.nickname}</y></g>")
+            self.log.info(
+                f"<g>├─ ✅ Logged in as: <y>{self.user_profile.nickname}</y></g>"
+            )
         self.log.info(
             f"<g>├─ 📈 Lvl: <y>{self.game_profile.current_level}</y> - Exp: <y>{self.game_profile.current_exp_percents}</y></g>"
         )
@@ -66,14 +68,14 @@ class Profile:
             f"<g>├─ 🔋 Energy: <y>{butils.round_int(self.game_profile.current_energy)}</y>/<y>{butils.round_int(self.tap_data.energy.current_lvl_value)}</y></g>"
         )
 
-    def get_game_data(self, blum = False):
+    def get_game_data(self, blum=False):
         try:
             url = "miniapps/api/user_game_level/getGameInfo?blumInvitationCode="
             if blum:
                 url += "9TOkLN1L"
             elif self.tgAccount and not blum:
                 url += self.tgAccount.ReferralToken
-                
+
             res: dict = self.http.get(
                 url=url,
             )
@@ -207,7 +209,7 @@ class Profile:
         )
         if not res or res.get("code", -1) != 0 or res.get("msg", False) != "OK":
             error_message = res.get(
-            "msg", "Unknown error occurred while performing taps."
+                "msg", "Unknown error occurred while performing taps."
             )
             raise Exception(error_message)
         self.log.info(
@@ -239,8 +241,10 @@ class Profile:
             if energy < int(max_energy * 0.05):
                 self.log.info(f"Low energy, skipping taps ...")
                 return True
-            
-            if utils.getConfig("auto_taps_humal_like", False): #TODO: human like required improvement
+
+            if utils.getConfig(
+                "auto_taps_humal_like", False
+            ):  # TODO: human like required improvement
                 while energy > int(max_energy * random.uniform(0.01, 0.05)):
                     collect_amount = int(max_energy * random.uniform(0.10, 0.25))
                     self._tap_request(collect_amount)

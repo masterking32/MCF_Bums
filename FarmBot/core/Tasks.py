@@ -58,7 +58,9 @@ class Tasks:
         )
 
     def _read_pwd_from_file(self, task: TaskMgr.Task):
-        file_path = os.path.join(self.bot_globals["module_dir"], "youtube_keywords.json")
+        file_path = os.path.join(
+            self.bot_globals["module_dir"], "youtube_keywords.json"
+        )
         if os.path.isfile("youtube_keywords.json"):
             self.log.info(f"File youtube_keywords.json not exists ...")
             return None
@@ -68,27 +70,30 @@ class Tasks:
         if not answers:
             self.log.info(f"Answers empty ...")
             return None
-        answer = next((answer for answer in answers if answer.get("id") == task.id), None)
+        answer = next(
+            (answer for answer in answers if answer.get("id") == task.id), None
+        )
         if answer:
             if answer.get("pwd"):
                 return answer.get("pwd")
             else:
-                self.log.info(f"Youtube task <y>{answer.get("name")}</y> pwd is unknown.")
-                self.log.info(f"Find it in <y>{answer.get("url")}</y> and add it to youtube_keywords.json manually")
+                self.log.info(
+                    f"Youtube task <y>{answer.get("name")}</y> pwd is unknown."
+                )
+                self.log.info(
+                    f"Find it in <y>{answer.get("url")}</y> and add it to youtube_keywords.json manually"
+                )
                 return None
-        answers.append(
-            {
-                "id": task.id,
-                "name": task.name,
-                "url": task.url,
-                "pwd": None
-            }
-        )
+        answers.append({"id": task.id, "name": task.name, "url": task.url, "pwd": None})
         answers.sort(key=lambda ans: ans.get("id"))
         with open(file_path, "w") as file:
             json.dump(answers, file, indent=4)
-        self.log.info(f"Task <y>{task.name}</y> was added to the youtube_keywords.json without a password ...")
-        self.log.info(f"Find it in <y>{task.url}</y> and add it to youtube_keywords.json manually")
+        self.log.info(
+            f"Task <y>{task.name}</y> was added to the youtube_keywords.json without a password ..."
+        )
+        self.log.info(
+            f"Find it in <y>{task.url}</y> and add it to youtube_keywords.json manually"
+        )
         return None
 
     async def perform_tasks(self):
@@ -100,8 +105,13 @@ class Tasks:
             return False
         try:
             incompleted_tasks = [
-                task for task in self.task_mgr.tasks if not task.is_finished
-                and ("boost" not in task.name.lower() and "?boost" not in task.url.lower())
+                task
+                for task in self.task_mgr.tasks
+                if not task.is_finished
+                and (
+                    "boost" not in task.name.lower()
+                    and "?boost" not in task.url.lower()
+                )
             ]
 
             for task in incompleted_tasks:
@@ -115,7 +125,9 @@ class Tasks:
                         continue
                     pwd = self.mcf_api.get_task_keyword(task.id, task.name)
                     if not pwd:
-                        self.log.info(f"Password for task <y>{task.name}</y> not found on API ...")
+                        self.log.info(
+                            f"Password for task <y>{task.name}</y> not found on API ..."
+                        )
                     pwd = self._read_pwd_from_file(task)
                     if not pwd:
                         await asyncio.sleep(random.randint(1, 2))
@@ -140,17 +152,24 @@ class Tasks:
                         if self.finish_task(task):
                             self.log_task_reward(task)
                     else:
-                        self.log.info(f"Insufficient level to accomplish the task. Requires <y>{req_level}</y>, yours is <y>{user_level}</y>.")
+                        self.log.info(
+                            f"Insufficient level to accomplish the task. Requires <y>{req_level}</y>, yours is <y>{user_level}</y>."
+                        )
                 elif task.task_type == "tap_coin" and task.type == "upgrade":
                     if self.profile.tap_data.collect_seq_no > 0:
                         if self.finish_task(task):
                             self.log_task_reward(task)
                 elif task.task_type == "invite_group":
-                    if task.invites_required > 0 and task.invites_progress >= task.invites_required:
+                    if (
+                        task.invites_required > 0
+                        and task.invites_progress >= task.invites_required
+                    ):
                         if self.finish_task(task):
                             self.log_task_reward(task)
                     else:
-                        self.log.info(f"Insufficient frens to accomplish the task. Requires <y>{task.invites_required}</y>, yours is <y>{task.invites_progress}</y>.")
+                        self.log.info(
+                            f"Insufficient frens to accomplish the task. Requires <y>{task.invites_required}</y>, yours is <y>{task.invites_progress}</y>."
+                        )
                         await asyncio.sleep(random.randint(1, 2))
                         continue
                 elif (
@@ -164,7 +183,9 @@ class Tasks:
                     if not self.tgAccount:
                         continue
                     # await self.mcf_api.start_bot(bot_id, ref_link) #TODO: Recive bot_id and ref_link
-                    if self.finish_task(task):                       # Can complete without start bot, not sure if for any
+                    if self.finish_task(
+                        task
+                    ):  # Can complete without start bot, not sure if for any
                         self.log_task_reward(task)
                 elif task.task_type == "nickname_check" and utils.getConfig(
                     "auto_change_name", True

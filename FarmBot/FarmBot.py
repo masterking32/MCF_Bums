@@ -79,6 +79,7 @@ class FarmBot:
 
             if not profile.get_game_data():
                 return
+
             await asyncio.sleep(random.randint(1, 2))
 
             store = Store(self.log, self.http, self.account_name, profile)

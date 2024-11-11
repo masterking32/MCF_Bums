@@ -32,7 +32,7 @@ class Auth:
 
                 headers = {
                     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-                    "Accept-Language": "en-US,en;q=0.9"
+                    "Accept-Language": "en-US,en;q=0.9",
                 }
 
                 self.http.get(
@@ -59,7 +59,12 @@ class Auth:
                 valid_response_code=[200, 201],
             )
 
-            if res is None or res.get("code", -1) != 0 or "data" not in res or res.get("msg", False) != "OK":
+            if (
+                res is None
+                or res.get("code", -1) != 0
+                or "data" not in res
+                or res.get("msg", False) != "OK"
+            ):
                 self.log.error(
                     f"<r>❌ Failed to authorize user <c>{self.account_name}</c>! RESPONSE_IS_NULL</r>"
                 )

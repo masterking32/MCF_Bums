@@ -12,7 +12,14 @@ from utilities import utilities as utils
 
 class City:
     def __init__(
-        self, log: Logger, httpRequest: HttpRequest, account_name: str, bot_globals: dict, profile: Profile, store: Store, mcfapi: MCFAPI
+        self,
+        log: Logger,
+        httpRequest: HttpRequest,
+        account_name: str,
+        bot_globals: dict,
+        profile: Profile,
+        store: Store,
+        mcfapi: MCFAPI,
     ):
         self.log: Logger = log
         self.http: HttpRequest = httpRequest
@@ -37,7 +44,7 @@ class City:
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
-        
+
     def get_free_boxes(self):
         if not utils.getConfig("auto_free_boxes", True):
             self.log.info(f"Auto check free boxes disabled.")
@@ -78,7 +85,7 @@ class City:
                 raise Exception("Failed to get combo cards from api.")
 
             payload = {
-                "cardIdStr": cards, #mast be: 106,220,303
+                "cardIdStr": cards,  # mast be: 106,220,303
             }
             res: dict = self.http.post(
                 url="miniapps/api/mine_active/JoinMineAcctive",

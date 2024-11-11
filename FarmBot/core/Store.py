@@ -191,14 +191,18 @@ class Store:
             self.log.error(f"<r>❌ {str(e)}</r>")
             return None
 
-    def claim_blum_skin(self): # TODO: need to find how to check if skin already claimed
+    def claim_blum_skin(
+        self,
+    ):  # TODO: need to find how to check if skin already claimed
         if not self.profile.user_profile.can_claim_blum:
             # self.log.info(f"Cannot claim blum reward right now")
             return
         try:
             payload = {
                 "userId": self.profile.user_profile.uid,
-                "blumInvitationCode": butils.generate_md5("9TOkLN1L"), #"c95ebdec8c444b604bb21ae73c3912c4",  # 9TOkLN1L = blum_ref_code.split("_")[1] to md5 32 -
+                "blumInvitationCode": butils.generate_md5(
+                    "9TOkLN1L"
+                ),  # "c95ebdec8c444b604bb21ae73c3912c4",  # 9TOkLN1L = blum_ref_code.split("_")[1] to md5 32 -
             }
             res: dict = self.http.post(
                 url="miniapps/api/linkage/claim_skin_blum",

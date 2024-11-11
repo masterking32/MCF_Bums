@@ -73,7 +73,8 @@ class Gangs:
             )
             if not resp or resp.get("code", -999) != 0 or resp.get("msg") != "OK":
                 error_message = resp.get(
-                    "msg", f"Unknown error occurred while joining gang <y>{gang_name}</y>."
+                    "msg",
+                    f"Unknown error occurred while joining gang <y>{gang_name}</y>.",
                 )
                 raise Exception(error_message)
 
@@ -85,12 +86,10 @@ class Gangs:
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
-        
+
     def leave_gang(self):
         try:
-            resp: dict = self.http.get(
-                url="miniapps/api/gang/gang_leave"
-            )
+            resp: dict = self.http.get(url="miniapps/api/gang/gang_leave")
             if not resp or resp.get("code", -999) != 0 or resp.get("msg") != "OK":
                 error_message = resp.get(
                     "msg", f"Unknown error occurred while leaving gang."
