@@ -80,10 +80,10 @@ async def check_cd(log, bot_globals):
 
 
 # Edit the following variables
-BOT_ID = "myuseragent_bot"
-REFERRAL_TOKEN = "ref_masterking32"
-SHORT_APP_NAME = None
-APP_URL = "https://api.masterking32.com/telegram_useragent.php"
+BOT_ID = "bums"
+REFERRAL_TOKEN = utilities.getConfig("referral_token", "")
+SHORT_APP_NAME = "Bums"
+APP_URL = "https://app.bums.bot"
 VERSION_HASH = ""
 # End of variables to edit
 
@@ -164,13 +164,17 @@ async def process_pg_account(account, bot_globals, log, group_id=None):
         if account.get("proxy") == "":
             account["proxy"] = None
 
+        ref = REFERRAL_TOKEN
+        if ref == "" or ref is None:
+            ref = random.choice(["ref_Y1r7YLBo", "ref_Uemcbndh"])
+
         tg = tgAccount(
             bot_globals=bot_globals,
             log=log,
             accountName=account["session_name"],
             proxy=account["proxy"],
             BotID=BOT_ID,
-            ReferralToken=REFERRAL_TOKEN,
+            ReferralToken=ref,
             ShortAppName=SHORT_APP_NAME,
             AppURL=APP_URL,
         )

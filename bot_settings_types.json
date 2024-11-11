@@ -1,79 +1,136 @@
 [
   {
-    "key": "key1",
-    "name": "Example Text",
-    "type": "text",
-    "placeholder": "Text Placeholder",
-    "default_value": "Default Text",
-    "description": "This is an example text field",
-    "required": false
-  },
-  {
-    "key": "key_number",
-    "name": "Example Number",
-    "type": "number",
-    "placeholder": "Number Placeholder",
-    "default_value": 1,
-    "description": "This is an example number field",
-    "min": 1,
-    "max": 255
-  },
-  {
-    "key": "key_checkbox1",
-    "name": "Example Checkbox",
+    "key": "daily_checking",
+    "name": "Auto daily checkin",
     "type": "checkbox",
     "default_value": "on",
-    "description": "This is an example checkbox field"
+    "description": ""
   },
   {
-    "key": "key_range1",
-    "name": "Example Range",
+    "key": "auto_taps",
+    "name": "Auto taps",
+    "type": "checkbox",
+    "default_value": "on",
+    "description": ""
+  },
+  {
+    "key": "auto_taps_humal_like",
+    "name": "Auto tap like human",
+    "type": "checkbox",
+    "default_value": "on",
+    "description": ""
+  },
+  {
+    "key": "auto_buy_pph_upgrades",
+    "name": "Auto buy pph upgrades",
+    "type": "checkbox",
+    "default_value": "on",
+    "description": ""
+  },
+  {
+    "key": "auto_buy_tap_upgrades",
+    "name": "Auto buy tap upgrades",
+    "type": "checkbox",
+    "default_value": "on",
+    "description": ""
+  },
+  {
+    "key": "auto_free_expeditions",
+    "name": "Check for free expeditions",
+    "type": "checkbox",
+    "default_value": "on",
+    "description": ""
+  },
+  {
+    "key": "auto_free_boxes",
+    "name": "Check for free boxes",
+    "type": "checkbox",
+    "default_value": "on",
+    "description": ""
+  },
+  {
+    "key": "auto_free_animals",
+    "name": "Check for free animals",
+    "type": "checkbox",
+    "default_value": "on",
+    "description": ""
+  },
+  {
+    "key": "auto_dily_combo",
+    "name": "Auto solve daily combo",
+    "type": "checkbox",
+    "default_value": "on",
+    "description": ""
+  },
+  {
+    "key": "auto_tasks",
+    "name": "Auto complete tasks",
+    "type": "checkbox",
+    "default_value": "on",
+    "description": ""
+  },
+  {
+    "key": "auto_pwd_tasks",
+    "name": "Auto complete tasks with password",
+    "type": "checkbox",
+    "default_value": "on",
+    "description": ""
+  },
+  {
+    "key": "auto_change_name",
+    "name": "Auto add BUMS to your name",
+    "type": "checkbox",
+    "default_value": "on",
+    "description": "Only for pyrogram/telethon"
+  },
+  {
+    "key": "auto_start_bots",
+    "name": "Auto starts other bots",
+    "type": "checkbox",
+    "default_value": "on",
+    "description": "Only for pyrogram/telethon"
+  },
+  {
+    "key": "auto_join_channels",
+    "name": "Auto join chats/channels",
+    "type": "checkbox",
+    "default_value": "on",
+    "description": "Only for pyrogram/telethon"
+  },
+  {
+    "key": "referral_token",
+    "name": "Referral Token",
+    "type": "text",
+    "placeholder": "",
+    "default_value": "",
+    "required": false,
+    "description": "Put your referral token here. Format: 38pIETXd"
+  },
+  {
+    "key": "max_threads",
+    "name": "Max Threads",
     "type": "range",
-    "default_value": 50,
-    "description": "This is an example range field",
-    "min": 50,
-    "max": 100
+    "default_value": 5,
+    "description": "Maximum number of threads to use for checking groups of accounts based on their proxies.",
+    "min": 1,
+    "max": 15
   },
   {
-    "key": "key_select1",
-    "name": "Example Select",
-    "type": "select",
-    "options": [
-      {
-        "value": "option1",
-        "name": "Option 1"
-      },
-      {
-        "value": "option2",
-        "name": "Option 2"
-      }
-    ],
-    "description": "This is an example select field",
-    "multi_select": false
+    "key": "delay_between_accounts",
+    "name": "Delay Between Check Accounts",
+    "type": "range",
+    "default_value": 35,
+    "description": "How long to wait between accounts, in seconds",
+    "min": 10,
+    "max": 3600
   },
   {
-    "key": "key_select2",
-    "name": "Example Multi-Select",
-    "type": "select",
-    "options": [
-      {
-        "value": "option1",
-        "name": "Option 1"
-      },
-      {
-        "value": "option2",
-        "name": "Option 2"
-      },
-      {
-        "value": "option3",
-        "name": "Option 3"
-      },
-      {
-        "value": "option4",
-        "name": "Option 4"
-      }
-    ],
-    "description": "This is an example select field",
-    "multi_select": true
+    "key": "check_interval",
+    "name": "Sleep delay after checked all account",
+    "type": "range",
+    "default_value": 3600,
+    "description": "How often to login into accounts, in seconds",
+    "min": 3600,
+    "max": 86400
   }
 ]
