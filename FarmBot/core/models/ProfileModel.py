@@ -104,6 +104,7 @@ class ProfileModel:
         @property
         def upgrades_count(self):
             return self._upgrades_count
+
         @property
         def can_claim_blum(self):
             return self._can_claim_blum
@@ -117,15 +118,21 @@ class ProfileModel:
             self._recovery = ProfileModel.TapData.TapUpgrade(
                 self._data.get("recovery", {}), "recovery"
             )
-            self._tap = ProfileModel.TapData.TapUpgrade(self._data.get("tap", {}), "tap")
+            self._tap = ProfileModel.TapData.TapUpgrade(
+                self._data.get("tap", {}), "tap"
+            )
             self._bonus_chance = ProfileModel.TapData.TapUpgrade(
                 self._data.get("bonusChance", {}), "bonusChance"
             )
             self._bonus_ratio = ProfileModel.TapData.TapUpgrade(
                 self._data.get("bonusRatio", {}), "bonusRatio"
             )
-            self._collect_seq_no = self._data.get("collectInfo", {}).get("collectSeqNo", -1)
-            self._collect_time = self._data.get("collectInfo", {}).get("collectTime", -1)
+            self._collect_seq_no = self._data.get("collectInfo", {}).get(
+                "collectSeqNo", -1
+            )
+            self._collect_time = self._data.get("collectInfo", {}).get(
+                "collectTime", -1
+            )
             self._auto_collect_coin = int(self._data.get("autoCollectCoin", -1))
             self._tap_upgrades = [
                 value

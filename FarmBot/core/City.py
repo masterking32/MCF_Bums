@@ -76,6 +76,8 @@ class City:
             return False
 
     def do_daily_combo(self):
+        # Not supported in the API at the moment
+        return
         if not utils.getConfig("auto_dily_combo", False):
             self.log.info("Daily combo disabled.")
             return True

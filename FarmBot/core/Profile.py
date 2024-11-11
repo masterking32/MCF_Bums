@@ -207,7 +207,12 @@ class Profile:
             url="miniapps/api/user_game/collectCoin",
             data=payload,
         )
-        if not res or res.get("code", -1) != 0 or res.get("msg", False) != "OK":
+        if (
+            res is None
+            or not res
+            or res.get("code", -1) != 0
+            or res.get("msg", False) != "OK"
+        ):
             error_message = res.get(
                 "msg", "Unknown error occurred while performing taps."
             )
@@ -242,15 +247,14 @@ class Profile:
                 self.log.info(f"Low energy, skipping taps ...")
                 return True
 
-            if utils.getConfig(
-                "auto_taps_humal_like", False
-            ):  # TODO: human like required improvement
-                while energy > int(max_energy * random.uniform(0.01, 0.05)):
+            if utils.getConfig("auto_taps_humal_like", False):
+                while energy > int(max_energy * 0.26):
                     collect_amount = int(max_energy * random.uniform(0.10, 0.25))
                     self._tap_request(collect_amount)
-                    energy = self.game_profile.current_balance
+                    energy = self.game_profile.current_energy
+                    time.sleep(random.uniform(1.0, 2.0))
             else:
-                collect_amount = int(energy * random.uniform(0.95, 0.98))
+                collect_amount = int(energy * random.uniform(0.90, 0.95))
                 self._tap_request(collect_amount)
 
             self.log.info(

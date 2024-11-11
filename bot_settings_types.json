@@ -56,13 +56,6 @@
     "description": ""
   },
   {
-    "key": "auto_dily_combo",
-    "name": "Auto solve daily combo",
-    "type": "checkbox",
-    "default_value": "on",
-    "description": ""
-  },
-  {
     "key": "auto_tasks",
     "name": "Auto complete tasks",
     "type": "checkbox",

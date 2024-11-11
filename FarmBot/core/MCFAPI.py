@@ -52,9 +52,22 @@ class MCFAPI:
                 "task_name": task_title,
             }
             resp = self._api_request("get_task", data)
-            if not resp or not resp.get("keyword"):
+            if not resp or not resp.get("answer"):
                 return None
-            return resp.get("keyword")
+            return resp.get("answer")
+        except Exception as e:
+            return None
+
+    def get_invite_link(self, url):
+        try:
+            data = {
+                "task_type": "invite",
+                "task_data": url,
+            }
+            resp = self._api_request("get_task", data)
+            if resp is None or "status" not in resp or resp["status"] != "success":
+                return None
+            return resp
         except Exception as e:
             return None
 
