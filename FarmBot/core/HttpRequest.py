@@ -260,7 +260,7 @@ class HttpRequest:
                 default_headers["Authorization"] = (
                     f'Bearer {self.auth_token if self.auth_token else "false"}'
                 )
-
+            raw_data = data
             if use_boundary:
                 boundary = butils.generate_boundary()
                 data = butils.generate_payload(boundary, data)
@@ -327,7 +327,7 @@ class HttpRequest:
                     url=url,
                     domain=domain,
                     use_boundary=use_boundary,
-                    data=data,
+                    data=raw_data,
                     headers=headers,
                     send_option_request=send_option_request,
                     valid_response_code=valid_response_code,
