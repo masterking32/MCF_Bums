@@ -262,10 +262,10 @@ class HttpRequest:
                 )
 
             if use_boundary:
-                boudary = butils.generate_boundary()
-                data = butils.generate_payload(boudary, data)
+                boundary = butils.generate_boundary()
+                data = butils.generate_payload(boundary, data)
                 default_headers["Content-Type"] = (
-                    f"multipart/form-data; boundary={boudary}"
+                    f"multipart/form-data; boundary={boundary}"
                 )
 
             if headers:
