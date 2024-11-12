@@ -25,9 +25,7 @@ class Store:
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
             elif resp and (
-                resp.get("code") != 0
-                or "data" not in resp
-                or resp.get("msg") != "OK"
+                resp.get("code") != 0 or "data" not in resp or resp.get("msg") != "OK"
             ):
                 error_message = resp.get(
                     "msg", "Unknown error occurred while fetching prop data."
@@ -216,7 +214,7 @@ class Store:
 
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
-            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+            elif resp and resp.get("status") is False:
                 error_message = resp.get(
                     "msg", "Unknown error occurred while getting blum reward skin."
                 )
