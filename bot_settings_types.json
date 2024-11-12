@@ -94,10 +94,10 @@
     "key": "referral_token",
     "name": "Referral Token",
     "type": "text",
-    "placeholder": "ref_Tzmbegau",
+    "placeholder": "ref_Uemcbndh",
     "default_value": "",
     "required": false,
-    "description": "Put your referral token here. Format: ref_Tzmbegau"
+    "description": "Put your referral token here. Format: ref_Uemcbndh"
   },
   {
     "key": "max_threads",

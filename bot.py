@@ -165,7 +165,7 @@ async def process_pg_account(account, bot_globals, log, group_id=None):
             account["proxy"] = None
 
         ref = REFERRAL_TOKEN
-        if ref == "" or ref is None:
+        if ref == "" or ref is None or "_" not in ref:
             ref = random.choice(["ref_Y1r7YLBo", "ref_Uemcbndh"])
 
         tg = tgAccount(
