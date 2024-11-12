@@ -94,10 +94,10 @@
     "key": "referral_token",
     "name": "Referral Token",
     "type": "text",
-    "placeholder": "",
+    "placeholder": "ref_Tzmbegau",
     "default_value": "",
     "required": false,
-    "description": "Put your referral token here. Format: 38pIETXd"
+    "description": "Put your referral token here. Format: ref_Tzmbegau"
   },
   {
     "key": "max_threads",

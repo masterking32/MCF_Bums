@@ -1,6 +1,7 @@
 from datetime import datetime
 import json
 
+
 class StoreModel:
     def __init__(self):
         pass
@@ -14,7 +15,7 @@ class StoreModel:
             self._url = str(self._data.get("url", ""))
             self._prop_id = int(self._data.get("propId", -999))
             self._prop_type_id = int(self._data.get("propTypeId", -999))
-            self._prop_data = StoreModel.StorePropData(json.loads(self._data.get("propData", "{}")))
+            self._prop_data = json.loads(self._data.get("propData", "[]"))
             self._basic_num = int(self._data.get("basicNum", -999))
             self._basic_addition_num = int(self._data.get("basicAdditionNum", -999))
             self._basic_addition_ratio = int(self._data.get("basicAdditionRatio", -999))
@@ -23,7 +24,10 @@ class StoreModel:
             self._is_recommend = int(self._data.get("isRecommend", -999))
             self._is_hot = int(self._data.get("isHot", -999))
             self._is_good_value = int(self._data.get("isGoodValue", -999))
-            self._sell_lists = [StoreModel.StorePropSellList(sell) for sell in self._data.get("sellLists", [])]
+            self._sell_lists = [
+                StoreModel.StorePropSellList(sell)
+                for sell in self._data.get("sellLists", [])
+            ]
             self._stock = int(self._data.get("stock", -999))
             self._is_buyed = bool(self._data.get("isBuy", False))
             self._today_used = int(self._data.get("toDayNowUseNum", -999))
@@ -34,7 +38,7 @@ class StoreModel:
         @property
         def id(self):
             return self._id
-        
+
         @property
         def title(self):
             return self._title
@@ -42,61 +46,80 @@ class StoreModel:
         @property
         def desc(self):
             return self._desc
-        
+
         @property
         def url(self):
             return self._url
+
         @property
         def prop_id(self):
             return self._prop_id
+
         @property
         def prop_type_id(self):
             return self._prop_type_id
+
         @property
         def prop_data(self):
-            return self._prop_data
+            prop_data = [StoreModel.StorePropData(item) for item in self._prop_data]
+            return prop_data
+
         @property
         def basic_num(self):
             return self._basic_num
+
         @property
         def basic_addition_num(self):
             return self._basic_addition_num
+
         @property
         def basic_addition_ratio(self):
             return self._basic_addition_ratio
+
         @property
         def first_addition_num(self):
             return self._first_addition_num
+
         @property
         def first_state(self):
             return self._first_state
+
         @property
         def is_recommend(self):
             return self._is_recommend
+
         @property
         def is_hot(self):
             return self._is_hot
+
         @property
         def is_good_value(self):
             return self._is_good_value
+
         @property
         def sell_lists(self):
             return self._sell_lists
+
         @property
         def stock(self):
             return self._stock
+
         @property
         def is_buyed(self):
             return self._is_buyed
+
         @property
         def today_used(self):
             return self._today_used
+
         @property
         def today_max_use(self):
             return self._today_max_use
+
         @property
         def acquisition_method(self):
             return self._acquisition_method
+
         @property
         def is_buy_allowed(self):
             return self._is_buy_allowed
@@ -109,8 +132,12 @@ class StoreModel:
             self._old_amount = float(self._data.get("oldAmount", -999))
             self._new_amount = float(self._data.get("newAmount", -999))
             self._buy_limit = int(self._data.get("limitBuyNum", -999))
-            self._limit_single_buy_num_min = int(self._data.get("limitSingleBuyNumMin", -999))
-            self._limit_single_buy_num_step = int(self._data.get("limitSingleBuyNumStep", -999))
+            self._limit_single_buy_num_min = int(
+                self._data.get("limitSingleBuyNumMin", -999)
+            )
+            self._limit_single_buy_num_step = int(
+                self._data.get("limitSingleBuyNumStep", -999)
+            )
             self._sale_start_time = self._data.get("saleStartTime")
             self._sale_end_time = self._data.get("saleEndTime")
             self._shelf_time = self._data.get("shelfTime")
@@ -118,7 +145,7 @@ class StoreModel:
         @property
         def id(self):
             return self._id
-        
+
         @property
         def pay_method(self):
             return self._pay_method
@@ -126,24 +153,31 @@ class StoreModel:
         @property
         def old_amount(self):
             return self._old_amount
+
         @property
         def new_amount(self):
             return self._new_amount
+
         @property
         def buy_limit(self):
             return self._buy_limit
+
         @property
         def limit_single_buy_num_min(self):
             return self._limit_single_buy_num_min
+
         @property
         def limit_single_buy_num_step(self):
             return self._limit_single_buy_num_step
+
         @property
         def sale_start_time(self):
             return self._safe_parse_dt(self._sale_start_time)
+
         @property
         def sale_end_time(self):
             return self._safe_parse_dt(self._sale_end_time)
+
         @property
         def shelf_time(self):
             return self._safe_parse_dt(self._shelf_time)
@@ -187,16 +221,19 @@ class StoreModel:
         @property
         def pph(self):
             return self._pph
-        
+
         @property
         def total_earn(self):
             return self._total_earn
+
         @property
         def reward(self):
             return self._reward
+
         @property
         def card_required(self):
             return self._card_required
+
         @property
         def card_remaning(self):
             return self._card_remaining

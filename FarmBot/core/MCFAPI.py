@@ -5,13 +5,21 @@ from mcf_utils.tgAccount import tgAccount as TG
 
 
 class MCFAPI:
-    def __init__(self, log: Logger, bot_globals: dict, account_name, proxy, tgAccount):
+    def __init__(self, log: Logger, bot_globals: dict, account_name, proxy, tgAccount, web_app_query):
         self.log = log
         self.bot_globals = bot_globals
         self.account_name = account_name
         self.proxy = proxy
         self.tgAccount = tgAccount
+        self.web_app_query = web_app_query
         self.license_key = self.bot_globals.get("license", None)
+        self.start_param = ""
+        self.ref_code = ""
+
+        if self.tgAccount is not None:
+            self.ref_code = self.tgAccount.ReferralToken
+            self.start_param = "/?tgWebAppStartParam=" + self.tgAccount.ReferralToken
+            # if self.tgAccount.NewStart:
 
     def _api_request(self, action: str, data: dict = {}):
         if self.license_key is None:

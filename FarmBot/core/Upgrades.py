@@ -1,4 +1,5 @@
 from .HttpRequest import HttpRequest
+from .MCFAPI import MCFAPI
 from .Profile import Profile
 from utilities import butils
 from .models.ProfileModel import ProfileModel
@@ -9,11 +10,11 @@ from utilities import utilities as utils
 
 class Upgrades:
     def __init__(
-        self, log: Logger, httpRequest: HttpRequest, account_name: str, profile: Profile
+        self, log: Logger, httpRequest: HttpRequest, mcf_api: MCFAPI, profile: Profile
     ):
         self.log: Logger = log
         self.http: HttpRequest = httpRequest
-        self.account_name: str = account_name
+        self.mcf_api: MCFAPI = mcf_api
         self.profile: Profile = profile
         self.pph_upgrades: list[ProfileModel.MineData.MineUpgrade] = []
         self.tap_upgrades: list[ProfileModel.TapData.TapUpgrade] = (
@@ -29,7 +30,7 @@ class Upgrades:
 
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
-            elif resp and (
+            if resp and (
                 resp.get("code") != 0
                 or "data" not in resp
                 or resp.get("msg") != "OK"
@@ -50,12 +51,12 @@ class Upgrades:
                 raise Exception(f"Local upgrade list is empty")
 
             self.log.info(
-                f"<g>├─ ✅ Upgrades successfully aquired for <c>{self.account_name}</c>!</g>"
+                f"<g>├─ ✅ Upgrades successfully aquired for <c>{self.mcf_api.account_name}</c>!</g>"
             )
             return True
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to get upgrades for <c>{self.account_name}</c>!</r>"
+                f"<r>❌ Failed to get upgrades for <c>{self.mcf_api.account_name}</c>!</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
@@ -82,7 +83,7 @@ class Upgrades:
 
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
-            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+            if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 if "Insufficient balance" in resp.get("msg"):
                     time.sleep(random.randint(1, 2))
                     return self._buy_upgrade(skill=skill, retries=retries - 1)
@@ -93,12 +94,12 @@ class Upgrades:
                 raise Exception(error_message)
 
             self.log.info(
-                f"<g>├─ ✅ Upgrade {skill_desc} skill {skill.id} success for <c>{self.account_name}</c>!</g>"
+                f"<g>├─ ✅ Upgrade {skill_desc} skill {skill.id} success for <c>{self.mcf_api.account_name}</c>!</g>"
             )
             return True
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to upgrade {skill_desc} skill for <c>{self.account_name}</c>!</r>"
+                f"<r>❌ Failed to upgrade {skill_desc} skill for <c>{self.mcf_api.account_name}</c>!</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
@@ -112,7 +113,7 @@ class Upgrades:
         if not self.upgrades or len(self.upgrades) < 1:
             return
         self.log.info(
-            f"<g>├─ ✅ Performing pph skill upgrades for <c>{self.account_name}</c>!</g>"
+            f"<g>├─ ✅ Performing pph skill upgrades for <c>{self.mcf_api.account_name}</c>!</g>"
         )
         self.upgrades.sort(key=lambda upgrade: upgrade.profit_diff)
         current_balance = self.profile.game_profile.current_balance
@@ -148,7 +149,7 @@ class Upgrades:
             return
 
         self.log.info(
-            f"<g>├─ ✅ Performing tap skill upgrades for <c>{self.account_name}</c>!</g>"
+            f"<g>├─ ✅ Performing tap skill upgrades for <c>{self.mcf_api.account_name}</c>!</g>"
         )
         current_balance = self.profile.game_profile.current_balance
         total_upgrades_price = 0

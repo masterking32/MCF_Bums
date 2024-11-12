@@ -15,17 +15,13 @@ class Friends:
         self,
         log: Logger,
         httpRequest: HttpRequest,
-        account_name: str,
-        bot_globals: dict,
+        mcf_api: MCFAPI,
         profile: Profile,
-        mcfapi: MCFAPI,
     ):
         self.log: Logger = log
         self.http: HttpRequest = httpRequest
-        self.account_name: str = account_name
-        self.bot_globals: dict = bot_globals
         self.profile: Profile = profile
-        self.mcf_api = mcfapi
+        self.mcf_api: MCFAPI = mcf_api
         self.friends: list[FriendModel.Friend] = None
         self.friends_count = -1
         self.balances: list[FriendModel.Balance] = None
@@ -43,7 +39,7 @@ class Friends:
             )
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
-            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+            if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
                     "msg", "Unknown error occurred while getting friends."
                 )
@@ -58,7 +54,7 @@ class Friends:
 
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to get friends for <c>{self.account_name}</c> ...</r>"
+                f"<r>❌ Failed to get friends for <c>{self.mcf_api.account_name}</c> ...</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
@@ -71,7 +67,7 @@ class Friends:
             )
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
-            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+            if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
                     "msg", "Unknown error occurred while getting friends balance."
                 )
@@ -83,12 +79,12 @@ class Friends:
 
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to get friends balance for <c>{self.account_name}</c> ...</r>"
+                f"<r>❌ Failed to get friends balance for <c>{self.mcf_api.account_name}</c> ...</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
 
-    def clain_reward(self):
+    def claim_reward(self):
         self.log.info(f"Claiming friends reward ...")
         try:
             # TODO: figureout
@@ -126,7 +122,7 @@ class Friends:
             )
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
-            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+            if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
                     "msg", "Unknown error occurred while claiming balance."
                 )
@@ -135,7 +131,7 @@ class Friends:
 
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to claim balance for <c>{self.account_name}</c> ...</r>"
+                f"<r>❌ Failed to claim balance for <c>{self.mcf_api.account_name}</c> ...</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False

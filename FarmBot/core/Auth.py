@@ -1,42 +1,34 @@
 import json
 from .HttpRequest import HttpRequest
+from .MCFAPI import MCFAPI
 from utilities.utilities import getConfig
 from urllib.parse import parse_qs, urlencode
 from utilities import butils
+from logging import Logger
 
 
 class Auth:
-    def __init__(self, log, httpRequest, account_name, start_param=""):
-        self.log = log
+    def __init__(self, log: Logger, httpRequest: HttpRequest, mcf_api: MCFAPI):
+        self.log: Logger = log
         self.http: HttpRequest = httpRequest
-        self.account_name: str = account_name
+        self.mcf_api: MCFAPI = mcf_api
+        self.account_name: str = self.mcf_api.account_name
         self.auth_token: str = None
-        self.start_param: str = start_param
 
-    @property
-    def token(self):
-        return self.auth_token
-
-    def authorize(self, web_app_query):
+    def authorize(self):
         try:
             self.log.info(
                 f"<y>Authorizing user <c>{self.account_name}</c> to <c>Bums</c>...</y>"
             )
 
-            ref_code = ""
             try:
-                if self.start_param != "":
-                    ref_code = self.start_param.split("=")[1]
-                else:
-                    self.start_param = "/"
-
                 headers = {
                     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
                     "Accept-Language": "en-US,en;q=0.9",
                 }
 
                 self.http.get(
-                    self.start_param,
+                    self.mcf_api.start_param,
                     domain="app",
                     headers=headers,
                     send_option_request=False,
@@ -48,10 +40,11 @@ class Auth:
 
             payload = {
                 "invitationCode": "",
-                "initData": web_app_query,
+                "initData": self.mcf_api.web_app_query,
             }
-            if ref_code != "":
-                payload["invitationCode"] = ref_code
+            if self.mcf_api.ref_code != "":
+                ref_code = self.mcf_api.tgAccount.ReferralToken
+                payload["invitationCode"] = ref_code.split("_")[1] if "_" in ref_code else ref_code
 
             resp: dict = self.http.post(
                 url="miniapps/api/user/telegram_auth",
@@ -61,18 +54,17 @@ class Auth:
 
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
-            elif resp and (
-                resp.get("code") != 0
-                or "data" not in resp
-                or resp.get("msg") != "OK"
+
+            if resp and (
+                resp.get("code") != 0 or not resp.get("data") or resp.get("msg") != "OK"
             ):
                 error_message = resp.get(
-                    "msg", "Unknown error occurred while applying prop."
+                    "msg", "An unknown error occurred during user authorization."
                 )
                 raise Exception(error_message)
 
             self.auth_token = resp.get("data", {}).get("token", None)
-            self.http.auth_token = self.token
+            self.http.auth_token = self.auth_token
 
             self.log.info(
                 f"<g>├─ ✅ Authorization complete for <c>{self.account_name}</c>!</g>"

@@ -1,8 +1,8 @@
 from .HttpRequest import HttpRequest
-from utilities import butils
+from .MCFAPI import MCFAPI
 from .Profile import Profile
 from .Store import Store
-from .MCFAPI import MCFAPI
+from utilities import butils
 from .models.ProfileModel import ProfileModel
 from .models.StoreModel import StoreModel
 import time, random
@@ -15,19 +15,15 @@ class City:
         self,
         log: Logger,
         httpRequest: HttpRequest,
-        account_name: str,
-        bot_globals: dict,
+        mcfapi: MCFAPI,
         profile: Profile,
         store: Store,
-        mcfapi: MCFAPI,
     ):
         self.log: Logger = log
         self.http: HttpRequest = httpRequest
-        self.account_name: str = account_name
-        self.bot_globals: dict = bot_globals
+        self.mcf_api: MCFAPI = mcfapi
         self.profile: Profile = profile
         self.store: Store = store
-        self.mcf_api = mcfapi
 
     def get_free_expeditions(self):
         if not utils.getConfig("auto_free_expeditions", True):
@@ -40,7 +36,7 @@ class City:
 
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to get free expeditions for <c>{self.account_name}</c> ...</r>"
+                f"<r>❌ Failed to get free expeditions for <c>{self.mcf_api.account_name}</c> ...</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
@@ -55,7 +51,7 @@ class City:
                 return False
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to get free boxes for <c>{self.account_name}</c> ...</r>"
+                f"<r>❌ Failed to get free boxes for <c>{self.mcf_api.account_name}</c> ...</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
@@ -70,7 +66,7 @@ class City:
                 return False
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to get free animals for <c>{self.account_name}</c> ...</r>"
+                f"<r>❌ Failed to get free animals for <c>{self.mcf_api.account_name}</c> ...</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
@@ -102,7 +98,7 @@ class City:
                 raise Exception(error_message)
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to solve daily combo for <c>{self.account_name}</c> ...</r>"
+                f"<r>❌ Failed to solve daily combo for <c>{self.mcf_api.account_name}</c> ...</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False

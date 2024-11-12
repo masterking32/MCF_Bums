@@ -17,19 +17,13 @@ class Tasks:
         self,
         log: Logger,
         httpRequest: HttpRequest,
-        bot_globals,
-        tgAccount,
-        account_name,
+        mcf_api: MCFAPI,
         profile: Profile,
-        mcfapi: MCFAPI,
     ):
         self.log: Logger = log
         self.http: HttpRequest = httpRequest
-        self.bot_globals = bot_globals
-        self.tgAccount = tgAccount
-        self.account_name = account_name
+        self.mcf_api: MCFAPI = mcf_api
         self.profile: Profile = profile
-        self.mcf_api: MCFAPI = mcfapi
         self.task_mgr: TaskMgr = None
 
     def _get_tasks(self):
@@ -39,7 +33,7 @@ class Tasks:
             )
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
-            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+            if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
                     "msg", "Unknown error occurred while getting tasks."
                 )
@@ -50,7 +44,7 @@ class Tasks:
             return True
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to get tasks for <c>{self.account_name}</c> ...</r>"
+                f"<r>❌ Failed to get tasks for <c>{self.mcf_api.account_name}</c> ...</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
@@ -62,7 +56,7 @@ class Tasks:
 
     def _read_pwd_from_file(self, task: TaskMgr.Task):
         file_path = os.path.join(
-            self.bot_globals["module_dir"], "youtube_keywords.json"
+            self.mcf_api.bot_globals["module_dir"], "youtube_keywords.json"
         )
         if os.path.isfile("youtube_keywords.json"):
             self.log.info(f"File youtube_keywords.json not exists ...")
@@ -149,7 +143,7 @@ class Tasks:
                         and "boost/" in task.url
                         and utils.getConfig("auto_join_channels", True)
                     ):
-                        if not self.tgAccount:
+                        if not self.mcf_api.tgAccount:
                             continue
                         channel_url = task.url
                         if "+" not in channel_url:
@@ -176,7 +170,7 @@ class Tasks:
                                 self.log_task_reward(task)
                             continue
 
-                        if not self.tgAccount:
+                        if not self.mcf_api.tgAccount:
                             continue
 
                         if (
@@ -265,7 +259,7 @@ class Tasks:
                     elif task.task_type == "nickname_check" and utils.getConfig(
                         "auto_change_name", True
                     ):
-                        if not self.tgAccount:
+                        if not self.mcf_api.tgAccount:
                             continue
                         if task.copy_text not in self.profile.user_profile.nickname:
                             if await self.mcf_api.set_name(task.copy_text):
@@ -290,7 +284,7 @@ class Tasks:
 
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to get tasks for <c>{self.account_name}</c> ...</r>"
+                f"<r>❌ Failed to get tasks for <c>{self.mcf_api.account_name}</c> ...</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
@@ -312,7 +306,7 @@ class Tasks:
             )
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
-            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+            if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
                     "msg", f"Unknown error occurred while finishing task {task.id}"
                 )
@@ -322,7 +316,7 @@ class Tasks:
 
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to finish task {task.id} for <c>{self.account_name}</c> ...</r>"
+                f"<r>❌ Failed to finish task {task.id} for <c>{self.mcf_api.account_name}</c> ...</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False

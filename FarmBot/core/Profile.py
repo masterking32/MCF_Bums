@@ -1,4 +1,5 @@
 from .HttpRequest import HttpRequest
+from .MCFAPI import MCFAPI
 from utilities import butils
 from .models.ProfileModel import ProfileModel
 from .models.StoreModel import StoreModel
@@ -8,11 +9,12 @@ from utilities import utilities as utils
 
 
 class Profile:
-    def __init__(self, log: Logger, httpRequest, account_name, tgAccount):
-        self.log = log
+    def __init__(self, log: Logger, httpRequest: HttpRequest, mcf_api: MCFAPI):
+        self.log: Logger = log
         self.http: HttpRequest = httpRequest
-        self.account_name = account_name
-        self.tgAccount = tgAccount
+        self.mcf_api: MCFAPI = mcf_api
+        self.account_name = self.mcf_api.account_name
+        self.tgAccount = self.mcf_api.tgAccount
         self._data: dict = {}
         self._user_profile: ProfileModel.UserProfile = None
         self._game_profile: ProfileModel.GameProfile = None
@@ -74,7 +76,9 @@ class Profile:
             if blum:
                 url += "9TOkLN1L"
             elif self.tgAccount and not blum:
-                ref_code = self.tgAccount.ReferralToken if self.tgAccount.NewStart else ""
+                ref_code = (
+                    self.tgAccount.ReferralToken
+                )
                 url += ref_code.split("_")[1] if "_" in ref_code else ref_code
 
             resp: dict = self.http.get(
@@ -83,7 +87,7 @@ class Profile:
 
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
-            elif resp and (
+            if resp and (
                 resp.get("code") != 0 or "data" not in resp or resp.get("msg") != "OK"
             ):
                 error_message = resp.get(
@@ -117,7 +121,7 @@ class Profile:
 
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
-            elif resp and (
+            if resp and (
                 resp.get("code") != 0
                 or "data" not in resp
                 or resp.get("msg", False) != "OK"
@@ -169,7 +173,7 @@ class Profile:
 
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
-            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+            if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
                     "msg", "Unknown error occurred while performing daily checkin."
                 )
@@ -212,7 +216,7 @@ class Profile:
         )
         if not resp:
             raise Exception("RESPONSE_IS_NULL")
-        elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+        if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
             error_message = resp.get(
                 "msg", "Unknown error occurred while performing taps."
             )
@@ -268,47 +272,3 @@ class Profile:
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
-
-    def check_notcoin_reward(self):
-        try:
-            not_coin_rewards: list[ProfileModel.UserProp.PropObject] = []
-            for prop in self.user_prop.props:
-                if prop.source == "skin" and prop.name in [
-                    "NOT a toy",
-                    "Glitch Bum",
-                    "Pixeloid",
-                ]:
-                    not_coin_rewards.append(prop)
-            if not not_coin_rewards or len(not_coin_rewards) <= 0:
-                return False
-
-            self._not_coin_rewards = not_coin_rewards
-            return True
-        except Exception as e:
-            self.log.error(
-                f"<r>❌ Failed to check notcoin rewards for <c>{self.account_name}</c>!</r>"
-            )
-            self.log.error(f"<r>❌ {str(e)}</r>")
-            return False
-
-    def check_notcoin_reward_active(self):
-        try:
-            skin_id = self.game_profile.skin_id
-            if skin_id == 0:
-                pass  # TODO: Implement getting skin
-
-            selected_skin = next(
-                (skin for skin in self.user_prop.props if skin.id == skin_id), None
-            )
-            best_nc_skin = max(self.not_coin_rewards, key=lambda skin: skin.ratio)
-            if selected_skin.ratio >= best_nc_skin.ratio:
-                return True
-        except Exception as e:
-            self.log.error(
-                f"<r>❌ Failed to check notcoin rewards for <c>{self.account_name}</c>!</r>"
-            )
-            self.log.error(f"<r>❌ {str(e)}</r>")
-            return False
-
-    def get_active_skin(self):
-        pass

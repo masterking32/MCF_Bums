@@ -48,6 +48,7 @@ class FarmBot:
         self.isPyrogram = isPyrogram
         self.tgAccount = tgAccount
         self.mcf_api = None
+        self.profile = None
 
     async def run(self):
         try:
@@ -58,88 +59,65 @@ class FarmBot:
             self.http = HttpRequest(
                 self.log, self.proxy, self.user_agent, self.account_name
             )
+
             self.mcf_api = MCFAPI(
                 self.log,
                 self.bot_globals,
                 self.account_name,
                 self.proxy,
                 self.tgAccount,
+                self.web_app_query,
             )
 
-            start_param = ""
-            if self.tgAccount is not None and self.tgAccount.NewStart:
-                start_param = "/?tgWebAppStartParam=" + self.tgAccount.ReferralToken
+            auth = Auth(self.log, self.http, self.mcf_api)
 
-            auth = Auth(self.log, self.http, self.account_name, start_param)
-
-            if not auth.authorize(self.web_app_query):
+            if not auth.authorize():
                 return
 
-            profile = Profile(self.log, self.http, self.account_name, self.tgAccount)
+            self.profile = Profile(self.log, self.http, self.mcf_api)
 
-            if not profile.get_game_data():
+            if not self.profile.get_game_data():
                 return
 
             await asyncio.sleep(random.randint(1, 2))
 
-            store = Store(self.log, self.http, self.account_name, profile)
+            self.store = Store(self.log, self.http, self.mcf_api, self.profile)
 
-            profile.print_info()
+            self.profile.print_info()
 
-            store.claim_blum_skin()
+            self.store.check_reward_skins()
 
-            if not profile.check_daily_checkin():
+            if not self.profile.check_daily_checkin():
                 return
             await asyncio.sleep(random.randint(1, 2))
 
-            if not profile.perform_taps():
+            if not self.profile.perform_taps():
                 return
             await asyncio.sleep(random.randint(1, 2))
 
-            tasks = Tasks(
-                self.log,
-                self.http,
-                self.bot_globals,
-                self.tgAccount,
-                self.account_name,
-                profile,
-                self.mcf_api,
-            )
+            tasks = Tasks(self.log, self.http, self.mcf_api, self.profile)
             await tasks.perform_tasks()
             await asyncio.sleep(random.randint(1, 2))
 
-            friends = Friends(
-                self.log,
-                self.http,
-                self.account_name,
-                self.bot_globals,
-                profile,
-                self.mcf_api,
-            )
+            friends = Friends(self.log, self.http, self.mcf_api, self.profile)
             friends.get_friends()
             friends.get_balance()
-            friends.clain_reward()
+            friends.claim_reward()
 
-            city = City(
-                self.log,
-                self.http,
-                self.account_name,
-                self.bot_globals,
-                profile,
-                store,
-                self.mcf_api,
+            self.city = City(
+                self.log, self.http, self.profile, self.mcf_api, self.store
             )
-            city.get_free_expeditions()
+            self.city.get_free_expeditions()
             await asyncio.sleep(random.randint(1, 2))
-            city.get_free_boxes()
+            self.city.get_free_boxes()
             await asyncio.sleep(random.randint(1, 2))
-            city.get_free_animas()
+            self.city.get_free_animas()
             await asyncio.sleep(random.randint(1, 2))
-            city.do_daily_combo()
+            self.city.do_daily_combo()
             await asyncio.sleep(random.randint(1, 2))
 
-            upgrades = Upgrades(self.log, self.http, self.account_name, profile)
-            upgrades.perform_upgrades()
+            self.upgrades = Upgrades(self.log, self.http, self.mcf_api, self.profile)
+            self.upgrades.perform_upgrades()
 
         except Exception as e:
             self.log.error(

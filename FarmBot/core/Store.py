@@ -1,6 +1,7 @@
 from .HttpRequest import HttpRequest
-from utilities import butils
+from .MCFAPI import MCFAPI
 from .Profile import Profile
+from utilities import butils
 from .models.ProfileModel import ProfileModel
 from .models.StoreModel import StoreModel
 import time, random
@@ -9,12 +10,20 @@ from logging import Logger
 
 class Store:
     def __init__(
-        self, log: Logger, httpRequest: HttpRequest, account_name: str, profile: Profile
+        self,
+        log: Logger,
+        httpRequest: HttpRequest,
+        mcf_api: MCFAPI,
+        profile: Profile,
     ):
         self.log: Logger = log
         self.http: HttpRequest = httpRequest
-        self.account_name: str = account_name
+        self.mcf_api: MCFAPI = mcf_api
         self.profile: Profile = profile
+        self.account_name: str = self.mcf_api.account_name
+        self.all_skins: list[StoreModel.StoreProp] = []
+        self.have_notcoin_reward = False
+        self.have_blum_reward = False
 
     def _get_props(self, page_type, page_num: int = 1, page_size: int = 10):
         try:
@@ -24,7 +33,7 @@ class Store:
 
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
-            elif resp and (
+            if resp and (
                 resp.get("code") != 0 or "data" not in resp or resp.get("msg") != "OK"
             ):
                 error_message = resp.get(
@@ -117,7 +126,7 @@ class Store:
 
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
-            elif resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+            if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
                     "msg", "Unknown error occurred while making prop order."
                 )
@@ -148,7 +157,7 @@ class Store:
 
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
-            elif resp and (
+            if resp and (
                 (not is_box and (resp.get("code") != 0 or resp.get("msg") != "OK"))
                 or (is_box and not resp.get("rewardLists"))
             ):
@@ -173,19 +182,26 @@ class Store:
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
 
-    def get_skins(self):
+    def _get_all_skins(self):
+        if self.all_skins and len(self.all_skins) > 0:
+            self.all_skins.clear()
         try:
-            skins = []
-            for i in range(3):
-                # paid_skin_{i+1},notcoin_skin_{i+1}
-                # paid_skin_{i+1},notcoin_skin_{i+1},halloween_paid_skin_{i+1},durov_paid_skin_{i+1},blum_skin_{i+1}
-                resp = self._get_props(
-                    f"paid_skin_{i+1},notcoin_skin_{i+1},halloween_paid_skin_{i+1},durov_paid_skin_{i+1},blum_skin_{i+1}"
-                )
+            skins: list[StoreModel.StoreProp] = []
+            for i in range(1, 4):
+                skins_list = [
+                    f"paid_skin_{i}",
+                    f"notcoin_skin_{i}",
+                    f"halloween_paid_skin_{i}",
+                    f"durov_paid_skin_{i}",
+                ]
+                if i == 2:
+                    skins_list.append(f"blum_skin_{i}")
+                endpoint = ",".join(skins_list)
+                resp = self._get_props(endpoint)
                 if resp:
-                    skins.extend(resp)
+                    skins.extend(StoreModel.StoreProp(item) for item in resp)
 
-            return skins
+            self.all_skins = skins
 
         except Exception as e:
             self.log.error(
@@ -194,18 +210,13 @@ class Store:
             self.log.error(f"<r>❌ {str(e)}</r>")
             return None
 
-    def claim_blum_skin(
-        self,
-    ):  # TODO: need to find how to check if skin already claimed
+    def _claim_blum_skin(self):
         if not self.profile.user_profile.can_claim_blum:
-            # self.log.info(f"Cannot claim blum reward right now")
             return
         try:
             payload = {
                 "userId": self.profile.user_profile.uid,
-                "blumInvitationCode": butils.generate_md5(
-                    "9TOkLN1L"
-                ),  # "c95ebdec8c444b604bb21ae73c3912c4",  # 9TOkLN1L = blum_ref_code.split("_")[1] to md5 32 -
+                "blumInvitationCode": butils.generate_md5("9TOkLN1L"),
             }
             resp: dict = self.http.post(
                 url="miniapps/api/linkage/claim_skin_blum",
@@ -214,7 +225,7 @@ class Store:
 
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
-            elif resp and resp.get("status") is False:
+            if resp and resp.get("status") is False:
                 error_message = resp.get(
                     "msg", "Unknown error occurred while getting blum reward skin."
                 )
@@ -227,3 +238,33 @@ class Store:
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
+
+    def _get_existing_skins(self):
+        self._get_all_skins()
+        if not self.all_skins or len(self.all_skins) <= 0:
+            self.log.info(f"All skins local data is empty ...")
+            return
+        existing_skins = [skin for skin in self.all_skins if skin.stock > 0]
+        return existing_skins
+
+    def check_reward_skins(self):
+        existing_skins = self._get_existing_skins()
+        skins_names = {skin.title for skin in existing_skins}
+        notcoin_skin_names = {"NOT a toy", "Glitch Bum", "Pixeloid"}
+        blum_skin_names = {"Blumbum"}
+        self.have_notcoin_reward = any(
+            skin in skins_names for skin in notcoin_skin_names
+        )
+        self.have_blum_reward = any(skin in skins_names for skin in blum_skin_names)
+        if not self.have_notcoin_reward:
+            if self.mcf_api.tgAccount:
+                # TODO: GET NOTCOIN REF CODE FROM API???
+                # self.mcf_api.start_bot("notcoin_bot", "")
+                # need to get available skin by notcoin level or other things before claim
+                pass
+        if not self.have_blum_reward:
+            # TODO: need to implement skin receiving
+            # im not sure if its right and safe way to do it in same loop with other ref code
+            # self.profile.get_game_data(True) # TODO
+            # self._claim_blum_skin()
+            pass
