@@ -85,7 +85,7 @@ class FarmBot:
 
             self.profile.print_info()
 
-            self.store.check_reward_skins()
+            # self.store.check_reward_skins()
 
             if not self.profile.check_daily_checkin():
                 return
