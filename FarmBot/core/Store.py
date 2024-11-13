@@ -73,7 +73,16 @@ class Store:
             free_props = [
                 prop
                 for prop in props
-                if any(sell.new_amount == 0 for sell in prop.sell_lists)
+                if (
+                    (
+                        prop_name == "expedition"
+                        and prop.title == "Rocket Expedition Team"
+                    )
+                    or (
+                        prop_name != "expedition"
+                        and any(sell.new_amount == 0 for sell in prop.sell_lists)
+                    )
+                )
                 and prop.today_used < prop.today_max_use
             ]
             if not free_props:
