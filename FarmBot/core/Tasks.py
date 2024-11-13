@@ -22,6 +22,7 @@ class Tasks:
         self.mcf_api: MCFAPI = mcf_api
         self.profile: Profile = profile
         self.task_mgr: TaskMgr = None
+        self.TaskFinished = False
 
     def _get_tasks(self):
         try:
@@ -52,6 +53,7 @@ class Tasks:
         )
 
     async def perform_tasks(self):
+        self.TaskFinished = False
         if not utils.getConfig("auto_tasks", True):
             self.log.info("⚙️ <g>Auto tasks disabled.</g>")
             return True
@@ -236,13 +238,19 @@ class Tasks:
                     self.log.error(f"❌ <r>{str(e)}</r>")
                     await asyncio.sleep(random.randint(1, 2))
                     continue
-
         except Exception as e:
             self.log.error(
                 f"<r>❌ Failed to get tasks for <c>{self.mcf_api.account_name}</c> ...</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
+
+        try:
+            if self.TaskFinished:
+                await asyncio.sleep(random.randint(3, 5))
+                return await self.perform_tasks()
+        except Exception as e:
+            return True
 
     def finish_task(self, task: TaskMgr.Task, pwd: str = None):
         try:
@@ -267,6 +275,7 @@ class Tasks:
                 )
                 raise Exception(error_message + ", pwd may be wrong." if pwd else "")
 
+            self.TaskFinished = True
             return True
 
         except Exception as e:
