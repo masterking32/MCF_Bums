@@ -54,45 +54,6 @@ class Tasks:
             f"<g>Received <y>{butils.round_int(task.reward_patry)}</y> for completing task: <y>{task.name}</y></g>"
         )
 
-    def _read_pwd_from_file(self, task: TaskMgr.Task):
-        file_path = os.path.join(
-            self.mcf_api.bot_globals["module_dir"], "youtube_keywords.json"
-        )
-        if os.path.isfile("youtube_keywords.json"):
-            self.log.info(f"File youtube_keywords.json not exists ...")
-            return None
-        self.log.info(f"Checking in youtube_keywords.json")
-        with open(file_path, "r") as file:
-            answers = json.load(file)
-        if not answers:
-            self.log.info(f"Answers empty ...")
-            return None
-        answer = next(
-            (answer for answer in answers if answer.get("id") == task.id), None
-        )
-        if answer:
-            if answer.get("pwd"):
-                return answer.get("pwd")
-            else:
-                self.log.info(
-                    f"Youtube task <y>{answer.get("name")}</y> pwd is unknown."
-                )
-                self.log.info(
-                    f"Find it in <y>{answer.get("url")}</y> and add it to youtube_keywords.json manually"
-                )
-                return None
-        answers.append({"id": task.id, "name": task.name, "url": task.url, "pwd": None})
-        answers.sort(key=lambda ans: ans.get("id"))
-        with open(file_path, "w") as file:
-            json.dump(answers, file, indent=4)
-        self.log.info(
-            f"Task <y>{task.name}</y> was added to the youtube_keywords.json without a password ..."
-        )
-        self.log.info(
-            f"Find it in <y>{task.url}</y> and add it to youtube_keywords.json manually"
-        )
-        return None
-
     async def perform_tasks(self):
         if not utils.getConfig("auto_tasks", True):
             self.log.info("Auto tasks disabled.")
@@ -121,21 +82,35 @@ class Tasks:
                             self.log.info(f"Auto complete youtube tasks disabled ...")
                             await asyncio.sleep(random.randint(1, 2))
                             continue
-                        pwd = self.mcf_api.get_task_keyword(task.id, task.name)
+                        pwd = self.mcf_api.get_task_keyword(task.url, task.name)
                         if not pwd:
                             self.log.info(
                                 f"Password for task <y>{task.name}</y> not found on API ..."
                             )
                             continue
-                        # pwd = self._read_pwd_from_file(task)
-                        # if not pwd:
-                        #     await asyncio.sleep(random.randint(1, 2))
-                        #     continue
                         await asyncio.sleep(random.randint(1, 2))
                         if self.finish_task(task, pwd):
                             self.log_task_reward(task)
+                    elif task.task_type == "nickname_check" and utils.getConfig(
+                        "auto_change_name", True
+                    ):
+                        if not self.mcf_api.tgAccount:
+                            continue
 
-                    if task.name == "Like and repost the latest news":
+                        if task.copy_text not in self.profile.user_profile.nickname:
+                            if await self.mcf_api.set_name(task.copy_text):
+                                self.log.info(
+                                    f"<g>✅ Added <c>{task.copy_text}</c> to last name to complete the <c>{task.name}</c> task</g>"
+                                )
+                                self.log.info(
+                                    f"<g>✅ <c>{task.name}</c> will be completed on the next run!</g>"
+                                )
+                            else:
+                                self.log.warning("Failed to set name.")
+                        else:
+                            if self.finish_task(task):
+                                self.log_task_reward(task)
+                    elif task.name == "Like and repost the latest news":
                         if self.finish_task(task):
                             self.log_task_reward(task)
                     elif (
@@ -225,7 +200,6 @@ class Tasks:
                         await asyncio.sleep(random.randint(3, 5))
                         if self.finish_task(task):
                             self.log_task_reward(task)
-
                     elif task.task_type == "level" and task.type == "index":
                         req_level = int(task.name.strip()[-1])
                         user_level = self.profile.game_profile.current_level
@@ -256,24 +230,6 @@ class Tasks:
                             )
                             await asyncio.sleep(random.randint(1, 2))
                             continue
-                    elif task.task_type == "nickname_check" and utils.getConfig(
-                        "auto_change_name", True
-                    ):
-                        if not self.mcf_api.tgAccount:
-                            continue
-                        if task.copy_text not in self.profile.user_profile.nickname:
-                            if await self.mcf_api.set_name(task.copy_text):
-                                self.log.info(
-                                    f"<g>✅ Added <c>{task.copy_text}</c> to last name to complete the <c>{task.name}</c> task</g>"
-                                )
-                                self.log.info(
-                                    f"<g>✅ <c>{task.name}</c> will be completed on the next run!</g>"
-                                )
-                            else:
-                                self.log.warning("Failed to set name.")
-                        else:
-                            if self.finish_task(task):
-                                self.log_task_reward(task)
 
                     self.profile.get_game_data()
                     await asyncio.sleep(random.randint(1, 2))
