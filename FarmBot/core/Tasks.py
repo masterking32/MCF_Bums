@@ -1,5 +1,6 @@
 import random
 import asyncio
+import time
 from .models.TaskModel import TaskMgr
 from .MCFAPI import MCFAPI
 from logging import Logger
@@ -75,6 +76,11 @@ class Tasks:
                 try:
                     self.log.info(f"<g>📝 Performing task: <y>{task.name}</y> ...</g>")
                     if "boost" in task.name.lower() or "?boost" in task.url.lower():
+                        continue
+                    elif (
+                        "Click to earn BumsCoins" in task.name
+                        and self.profile.game_profile.current_level < 5
+                    ):
                         continue
                     elif task.task_type == "pwd":
                         if not utils.getConfig("auto_pwd_tasks", True):
@@ -276,6 +282,7 @@ class Tasks:
                 raise Exception(error_message + ", pwd may be wrong." if pwd else "")
 
             self.TaskFinished = True
+            time.sleep(random.randint(3, 5))
             return True
 
         except Exception as e:

@@ -21,6 +21,8 @@ class Upgrades:
             self.profile.tap_data.tap_upgrades
         )
 
+        self.BuyCard = False
+
     def _get_upgrades(self):
         try:
             resp: dict = self.http.post(
@@ -94,6 +96,8 @@ class Upgrades:
             self.log.info(
                 f"<g>├─ ✅ Upgrade {skill_desc} skill {skill.id} succeeded for <c>{self.mcf_api.account_name}</c>!</g>"
             )
+
+            self.BuyCard = True
             return True
         except Exception as e:
             self.log.error(
@@ -103,6 +107,7 @@ class Upgrades:
             return False
 
     def _perform_pph_upgrades(self):
+        self.BuyCard = False
         if not utils.getConfig("auto_buy_pph_upgrades", True):
             self.log.info(f"<y>Auto-buy PPH upgrades disabled.</y>")
             return True
@@ -137,6 +142,13 @@ class Upgrades:
                     current_balance -= upgrade.next_lvl_price
             time.sleep(random.randint(1, 3))
         self.profile.game_profile.current_balance = current_balance
+
+        try:
+            if self.BuyCard:
+                time.sleep(random.randint(1, 3))
+                self._perform_pph_upgrades()
+        except Exception as e:
+            pass
 
     def _perform_tap_upgrades(self):
         if not utils.getConfig("auto_buy_tap_upgrades", True):
