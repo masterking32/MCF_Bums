@@ -7,6 +7,8 @@ from .models.StoreModel import StoreModel
 import time, random
 from logging import Logger
 
+from utilities import utilities as utils
+
 
 class Store:
     def __init__(
@@ -73,26 +75,27 @@ class Store:
             free_props = [
                 prop
                 for prop in props
-                if (
-                    (
-                        prop_name == "expedition"
-                        and prop.title == "Rocket Expedition Team"
-                    )
-                    or (
-                        prop_name != "expedition"
-                        and any(sell.new_amount == 0 for sell in prop.sell_lists)
-                    )
-                )
+                if any(sell.new_amount == 0 for sell in prop.sell_lists)
                 and prop.today_used < prop.today_max_use
             ]
+
             if not free_props:
                 return False
 
             for prop in free_props:
                 if prop.prop_id < 0:
                     continue
+
                 if prop.today_used >= prop.today_max_use:
                     continue
+
+                if (
+                    prop_name == "expedition"
+                    and not utils.getConfig("cheating_mode", False)
+                    and prop.title != "Rocket Expedition Team"
+                ):
+                    continue
+
                 sell_id = next(
                     (
                         sell.id

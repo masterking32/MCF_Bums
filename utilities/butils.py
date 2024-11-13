@@ -6,11 +6,12 @@ def generate_boundary():
     boundary = "----WebKitFormBoundary" + random_string
     return boundary
 
+
 def generate_payload(boundary, data, utf8=False):
     if boundary is None or boundary == "":
         raise TypeError("Unable to generate payload, boundary required.")
     if not isinstance(data, dict):
-         raise TypeError("Unable to generate payload, dict object required.")
+        raise TypeError("Unable to generate payload, dict object required.")
 
     body = []
     for name, value in data.items():
@@ -24,6 +25,7 @@ def generate_payload(boundary, data, utf8=False):
         return "".join(body).encode("utf-8")
 
     return "".join(body)
+
 
 def generate_md5(message: str, output_length=32):
     import hashlib
@@ -41,6 +43,7 @@ def generate_md5(message: str, output_length=32):
     else:
         raise ValueError("Output length must be 16 or 32.")
 
+
 def round_int(num):
     num = int(num)
     if num < 1000:
@@ -53,7 +56,8 @@ def round_int(num):
         return str(round(num / 1000000000, 2)) + "b"
     else:
         return str(round(num / 1000000000000, 2)) + "t"
-    
+
+
 def normalize_name(string: str):
     import re
 
