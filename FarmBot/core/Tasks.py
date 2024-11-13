@@ -1,8 +1,5 @@
-import json
-import time
 import random
 import asyncio
-import os
 from .models.TaskModel import TaskMgr
 from .MCFAPI import MCFAPI
 from logging import Logger
@@ -51,14 +48,14 @@ class Tasks:
 
     def log_task_reward(self, task: TaskMgr.Task):
         self.log.info(
-            f"<g>Received <y>{butils.round_int(task.reward_patry)}</y> for completing task: <y>{task.name}</y></g>"
+            f"<g>🎉 Received <y>{butils.round_int(task.reward_patry)}</y> for completing task: <y>{task.name}</y></g>"
         )
 
     async def perform_tasks(self):
         if not utils.getConfig("auto_tasks", True):
-            self.log.info("Auto tasks disabled.")
+            self.log.info("⚙️ <g>Auto tasks disabled.</g>")
             return True
-        self.log.info("<g>Performing tasks...</g>   ")
+        self.log.info("<g>🚀 Performing tasks...</g>")
         if not self._get_tasks():
             return False
         try:
@@ -74,18 +71,20 @@ class Tasks:
 
             for task in incompleted_tasks:
                 try:
-                    self.log.info(f"<g>Performing task: <y>{task.name}</y> ...</g>")
+                    self.log.info(f"<g>📝 Performing task: <y>{task.name}</y> ...</g>")
                     if "boost" in task.name.lower() or "?boost" in task.url.lower():
                         continue
                     elif task.task_type == "pwd":
                         if not utils.getConfig("auto_pwd_tasks", True):
-                            self.log.info(f"Auto complete youtube tasks disabled ...")
+                            self.log.info(
+                                f"⚙️ <g>Auto complete YouTube tasks disabled ...</g>"
+                            )
                             await asyncio.sleep(random.randint(1, 2))
                             continue
                         pwd = self.mcf_api.get_task_keyword(task.url, task.name)
                         if not pwd:
                             self.log.info(
-                                f"Password for task <y>{task.name}</y> not found on API ..."
+                                f"🔑 <g>Password for task <y>{task.name}</y> not found on API ...</g>"
                             )
                             continue
                         await asyncio.sleep(random.randint(1, 2))
@@ -106,7 +105,7 @@ class Tasks:
                                     f"<g>✅ <c>{task.name}</c> will be completed on the next run!</g>"
                                 )
                             else:
-                                self.log.warning("Failed to set name.")
+                                self.log.warning("⚠️ <r>Failed to set name.</r>")
                         else:
                             if self.finish_task(task):
                                 self.log_task_reward(task)
@@ -157,13 +156,13 @@ class Tasks:
                             or "?" in task.url
                         ):
                             if not utils.getConfig("auto_start_bots", True):
-                                self.log.info(f"Auto start bot disabled ...")
+                                self.log.info(f"⚙️ <g>Auto start bot disabled ...</g>")
                                 continue
 
                             api_resp = self.mcf_api.get_invite_link(task.url)
                             if not api_resp:
                                 self.log.info(
-                                    f"Failed to get invite link for <y>{task.name}</y> ..."
+                                    f"🔗 <g>Failed to get invite link for <y>{task.name}</y> ...</g>"
                                 )
                                 continue
 
@@ -177,7 +176,7 @@ class Tasks:
                             continue
 
                         if not utils.getConfig("auto_join_channels", True):
-                            self.log.info(f"Auto join channels disabled ...")
+                            self.log.info(f"⚙️ <g>Auto join channels disabled ...</g>")
                             continue
 
                         channel_url = task.url
@@ -211,7 +210,7 @@ class Tasks:
                                 self.log_task_reward(task)
                         else:
                             self.log.info(
-                                f"<g>Insufficient level to accomplish the task. Requires <y>{req_level}</y>, yours is <y>{user_level}</y>.</g>"
+                                f"<g>⚠️ Insufficient level to accomplish the task. Requires <y>{req_level}</y>, yours is <y>{user_level}</y>.</g>"
                             )
                     elif task.task_type == "tap_coin" and task.type == "upgrade":
                         if self.profile.tap_data.collect_seq_no > 0:
@@ -226,7 +225,7 @@ class Tasks:
                                 self.log_task_reward(task)
                         else:
                             self.log.info(
-                                f"<g>Insufficient frens to accomplish the task. Requires <y>{task.invites_required}</y>, yours is <y>{task.invites_progress}</y>.</g>"
+                                f"<g>⚠️ Insufficient friends to accomplish the task. Requires <y>{task.invites_required}</y>, yours is <y>{task.invites_progress}</y>.</g>"
                             )
                             await asyncio.sleep(random.randint(1, 2))
                             continue
@@ -266,7 +265,7 @@ class Tasks:
                 error_message = resp.get(
                     "msg", f"Unknown error occurred while finishing task {task.id}"
                 )
-                raise Exception(error_message + ", pwd may be wrond." if pwd else "")
+                raise Exception(error_message + ", pwd may be wrong." if pwd else "")
 
             return True
 
