@@ -14,7 +14,7 @@
     "description": ""
   },
   {
-    "key": "auto_taps_humal_like",
+    "key": "auto_taps_human_like",
     "name": "Auto tap like human",
     "type": "checkbox",
     "default_value": "on",
