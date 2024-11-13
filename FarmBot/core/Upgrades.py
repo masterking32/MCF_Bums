@@ -63,7 +63,7 @@ class Upgrades:
 
     def _buy_upgrade(
         self,
-        skill: ProfileModel.MineData.MineUpgrade | ProfileModel.TapData.TapUpgrade,
+        skill,
         retries: int = 2,
     ):
         try:
