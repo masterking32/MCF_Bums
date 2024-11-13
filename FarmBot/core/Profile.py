@@ -57,7 +57,7 @@ class Profile:
                 f"<g>├─ ✅ Logged in as: <y>{self.user_profile.nickname}</y></g>"
             )
         self.log.info(
-            f"<g>├─ 📈 Lvl: <y>{self.game_profile.current_level}</y> - Exp: <y>{self.game_profile.current_exp_percents}</y></g>"
+            f"<g>├─ 📈 Level: <y>{self.game_profile.current_level}</y> - Exp: <y>{self.game_profile.current_exp_percents}%</y></g>"
         )
         self.log.info(
             f"<g>├─ 💰 Balance: <y>{butils.round_int(self.game_profile.current_balance)}</y></g>"
@@ -65,7 +65,6 @@ class Profile:
         self.log.info(
             f"<g>├─ 💵 Offline income: <y>{butils.round_int(self.mine_info.mine_offline_coin)}</y></g>"
         )
-        # self.log.info(f"<g>├─ ⚖️  Daily tap coins limit: <y>{butils.round_int(self.game_info.tapped_coins)}</y>/<y>{butils.round_int(self.game_info.tapped_coins_limit)}</y></g>")
         self.log.info(
             f"<g>├─ 🔋 Energy: <y>{butils.round_int(self.game_profile.current_energy)}</y>/<y>{butils.round_int(self.tap_data.energy.current_lvl_value)}</y></g>"
         )
@@ -76,9 +75,7 @@ class Profile:
             if blum:
                 url += "9TOkLN1L"
             elif self.tgAccount and not blum:
-                ref_code = (
-                    self.tgAccount.ReferralToken
-                )
+                ref_code = self.tgAccount.ReferralToken
                 url += ref_code.split("_")[1] if "_" in ref_code else ref_code
 
             resp: dict = self.http.get(
@@ -105,14 +102,14 @@ class Profile:
             return True
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to aquire game data for <c>{self.account_name}</c>!</r>"
+                f"<r>❌ Failed to acquire game data for <c>{self.account_name}</c>!</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
 
     def check_daily_checkin(self):
         if not utils.getConfig("daily_checking", True):
-            self.log.info(f"Auyo daily checkin disabled.")
+            self.log.info(f"<g>├─ ⚙️ Auto daily check-in disabled.</g>")
             return True
         try:
             resp: dict = self.http.get(
@@ -127,7 +124,7 @@ class Profile:
                 or resp.get("msg", False) != "OK"
             ):
                 error_message = resp.get(
-                    "msg", "Unknown error occurred while checking daily checkin."
+                    "msg", "Unknown error occurred while checking daily check-in."
                 )
                 raise Exception(error_message)
 
@@ -150,13 +147,13 @@ class Profile:
                 return self.check_daily_checkin()
 
             self.log.info(
-                f'<g>├─ ✔️  Daily checkin: {f"<y>Yes</y>" if is_checked_in else "<r>No</r>"}</g>'
+                f'<g>├─ ✔️ Daily check-in: {f"<y>Yes</y>" if is_checked_in else "<r>No</r>"}</g>'
             )
 
             return True
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to check daily checkin for <c>{self.account_name}</c>!</r>"
+                f"<r>❌ Failed to check daily check-in for <c>{self.account_name}</c>!</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
@@ -175,7 +172,7 @@ class Profile:
                 raise Exception("RESPONSE_IS_NULL")
             if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
-                    "msg", "Unknown error occurred while performing daily checkin."
+                    "msg", "Unknown error occurred while performing daily check-in."
                 )
                 raise Exception(error_message)
 
@@ -187,14 +184,14 @@ class Profile:
             )
 
             self.log.info(
-                f"<g>├─ ✔️  Daily checkin success, <y>{day_desc}</y>. "
+                f"<g>├─ ✔️ Daily check-in success, <y>{day_desc}</y>. "
                 f"Reward: {normal_reward}{premium_text}</g>"
             )
 
             return True
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to perform daily checkin for <c>{self.account_name}</c>!</r>"
+                f"<r>❌ Failed to perform daily check-in for <c>{self.account_name}</c>!</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
@@ -222,7 +219,7 @@ class Profile:
             )
             raise Exception(error_message)
         self.log.info(
-            f"<g>├─ ✔️  Spended tap energy {butils.round_int(collectAmount)} for <c>{self.account_name}</c></g>"
+            f"<g>├─ ✔️ Spent tap energy {butils.round_int(collectAmount)} for <c>{self.account_name}</c></g>"
         )
         time.sleep(random.uniform(0.5, 1.0))
         self.get_game_data()
@@ -230,7 +227,7 @@ class Profile:
 
     def perform_taps(self):
         if not utils.getConfig("auto_taps", True):
-            self.log.info(f"Auyo taps disabled.")
+            self.log.info(f"<g>├─ ⚙️ Auto taps disabled.</g>")
             return True
         try:
             tapped_coins = self.game_profile.tapped_coins
@@ -248,10 +245,10 @@ class Profile:
                 f"<g>├─ 🔋 Current energy <c>{butils.round_int(energy)}</c></g>"
             )
             if energy < int(max_energy * 0.05):
-                self.log.info(f"Low energy, skipping taps ...")
+                self.log.info(f"<g>├─ ⚠️ Low energy, skipping taps ...</g>")
                 return True
 
-            if utils.getConfig("auto_taps_humal_like", False):
+            if utils.getConfig("auto_taps_human_like", False):
                 while energy > int(max_energy * 0.26):
                     collect_amount = int(max_energy * random.uniform(0.10, 0.25))
                     self._tap_request(collect_amount)

@@ -18,7 +18,7 @@ class Auth:
     def authorize(self):
         try:
             self.log.info(
-                f"<y>Authorizing user <c>{self.account_name}</c> to <c>Bums</c>...</y>"
+                f"🔐 <y>Authorizing user <c>{self.account_name}</c> to <c>Bums</c>...</y>"
             )
 
             try:
@@ -44,7 +44,9 @@ class Auth:
             }
             if self.mcf_api.ref_code != "":
                 ref_code = self.mcf_api.tgAccount.ReferralToken
-                payload["invitationCode"] = ref_code.split("_")[1] if "_" in ref_code else ref_code
+                payload["invitationCode"] = (
+                    ref_code.split("_")[1] if "_" in ref_code else ref_code
+                )
 
             resp: dict = self.http.post(
                 url="miniapps/api/user/telegram_auth",
@@ -67,12 +69,12 @@ class Auth:
             self.http.auth_token = self.auth_token
 
             self.log.info(
-                f"<g>├─ ✅ Authorization complete for <c>{self.account_name}</c>!</g>"
+                f"✅ <g>Authorization complete for user <c>{self.account_name}</c>!</g>"
             )
             return True
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to authorize user <c>{self.account_name}</c>!</r>"
+                f"❌ <r>Failed to authorize user <c>{self.account_name}</c>!</r>"
             )
-            self.log.error(f"<r>❌ {str(e)}</r>")
+            self.log.error(f"❌ <r>{str(e)}</r>")
             return False

@@ -31,9 +31,7 @@ class Upgrades:
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
             if resp and (
-                resp.get("code") != 0
-                or "data" not in resp
-                or resp.get("msg") != "OK"
+                resp.get("code") != 0 or "data" not in resp or resp.get("msg") != "OK"
             ):
                 error_message = resp.get(
                     "msg", f"Unknown error occurred while getting upgrades."
@@ -42,16 +40,16 @@ class Upgrades:
 
             upgrades_list = resp.get("data", {}).get("lists", [])
             if not upgrades_list or len(upgrades_list) < 1:
-                raise Exception(f"Server upgrade list is empty")
+                raise Exception("Server upgrade list is empty")
 
             self.upgrades = [
                 ProfileModel.MineData.MineUpgrade(upgrade) for upgrade in upgrades_list
             ]
             if not self.upgrades or len(self.upgrades) < 1:
-                raise Exception(f"Local upgrade list is empty")
+                raise Exception("Local upgrade list is empty")
 
             self.log.info(
-                f"<g>├─ ✅ Upgrades successfully aquired for <c>{self.mcf_api.account_name}</c>!</g>"
+                f"<g>├─ ✅ Upgrades successfully acquired for <c>{self.mcf_api.account_name}</c>!</g>"
             )
             return True
         except Exception as e:
@@ -94,7 +92,7 @@ class Upgrades:
                 raise Exception(error_message)
 
             self.log.info(
-                f"<g>├─ ✅ Upgrade {skill_desc} skill {skill.id} success for <c>{self.mcf_api.account_name}</c>!</g>"
+                f"<g>├─ ✅ Upgrade {skill_desc} skill {skill.id} succeeded for <c>{self.mcf_api.account_name}</c>!</g>"
             )
             return True
         except Exception as e:
@@ -106,14 +104,14 @@ class Upgrades:
 
     def _perform_pph_upgrades(self):
         if not utils.getConfig("auto_buy_pph_upgrades", True):
-            self.log.info(f"Auto buy pph upgrades disabled.")
+            self.log.info(f"<y>Auto-buy PPH upgrades disabled.</y>")
             return True
         if not self._get_upgrades():
             return
         if not self.upgrades or len(self.upgrades) < 1:
             return
         self.log.info(
-            f"<g>├─ ✅ Performing pph skill upgrades for <c>{self.mcf_api.account_name}</c>!</g>"
+            f"<g>├─ ✅ Performing PPH skill upgrades for <c>{self.mcf_api.account_name}</c>!</g>"
         )
         self.upgrades.sort(key=lambda upgrade: upgrade.profit_diff)
         current_balance = self.profile.game_profile.current_balance
@@ -142,7 +140,7 @@ class Upgrades:
 
     def _perform_tap_upgrades(self):
         if not utils.getConfig("auto_buy_tap_upgrades", True):
-            self.log.info(f"Auto buy tap upgrades disabled.")
+            self.log.info(f"<y>Auto-buy tap upgrades disabled.</y>")
             return True
 
         if not self.tap_upgrades or len(self.tap_upgrades) < 1:

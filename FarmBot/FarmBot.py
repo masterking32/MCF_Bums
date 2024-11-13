@@ -53,7 +53,7 @@ class FarmBot:
     async def run(self):
         try:
             self.log.info(
-                f"<g>📦 Bums is starting for account <cyan>{self.account_name}</cyan>...</g>"
+                f"📦 <g>Bums is starting for account <cyan>{self.account_name}</cyan>...</g>"
             )
 
             self.http = HttpRequest(

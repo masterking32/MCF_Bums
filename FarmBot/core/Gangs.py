@@ -78,7 +78,7 @@ class Gangs:
             if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
                     "msg",
-                    f"Unknown error occurred while joining gang <y>{gang_name}</y>.",
+                    f"Unknown error occurred while joining the gang <y>{gang_name}</y>.",
                 )
                 raise Exception(error_message)
 
@@ -86,7 +86,7 @@ class Gangs:
 
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to join gang <y>{gang_name}</y> for <c>{self.account_name}</c> ...</r>"
+                f"<r>❌ Failed to join the gang <y>{gang_name}</y> for <c>{self.account_name}</c> ...</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
@@ -98,7 +98,7 @@ class Gangs:
                 raise Exception("RESPONSE_IS_NULL")
             if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
-                    "msg", f"Unknown error occurred while leaving gang."
+                    "msg", "Unknown error occurred while leaving the gang."
                 )
                 raise Exception(error_message)
 
@@ -106,7 +106,7 @@ class Gangs:
 
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to leave gang for <c>{self.account_name}</c> ...</r>"
+                f"<r>❌ Failed to leave the gang for <c>{self.account_name}</c> ...</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False

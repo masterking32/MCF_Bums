@@ -27,46 +27,46 @@ class City:
 
     def get_free_expeditions(self):
         if not utils.getConfig("auto_free_expeditions", True):
-            self.log.info(f"Auto check free expeditions disabled.")
+            self.log.info(f"<y>⚙️ Auto-check for free expeditions is disabled.</y>")
             return True
         try:
-            self.log.info(f"Checking for free expeditions ...")
+            self.log.info(f"<g>🔍 Checking for free expeditions...</g>")
             if not self.store._get_free_prop("expedition"):
                 return False
 
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to get free expeditions for <c>{self.mcf_api.account_name}</c> ...</r>"
+                f"<r>❌ Failed to get free expeditions for <c>{self.mcf_api.account_name}</c>.</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
 
     def get_free_boxes(self):
         if not utils.getConfig("auto_free_boxes", True):
-            self.log.info(f"Auto check free boxes disabled.")
+            self.log.info(f"<y>⚙️ Auto-check for free boxes is disabled.</y>")
             return True
         try:
-            self.log.info(f"Checking for free boxes ...")
+            self.log.info(f"<g>🔍 Checking for free boxes...</g>")
             if not self.store._get_free_prop("box"):
                 return False
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to get free boxes for <c>{self.mcf_api.account_name}</c> ...</r>"
+                f"<r>❌ Failed to get free boxes for <c>{self.mcf_api.account_name}</c>.</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
 
     def get_free_animas(self):
         if not utils.getConfig("auto_free_animals", True):
-            self.log.info(f"Auto check free animals disabled.")
+            self.log.info(f"<y>⚙️ Auto-check for free animals is disabled.</y>")
             return True
         try:
-            self.log.info(f"Checking for free animals ...")
+            self.log.info(f"<g>🔍 Checking for free animals...</g>")
             if not self.store._get_free_prop("animals"):
                 return False
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to get free animals for <c>{self.mcf_api.account_name}</c> ...</r>"
+                f"<r>❌ Failed to get free animals for <c>{self.mcf_api.account_name}</c>.</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
@@ -75,15 +75,15 @@ class City:
         # Not supported in the API at the moment
         return
         if not utils.getConfig("auto_dily_combo", False):
-            self.log.info("Daily combo disabled.")
+            self.log.info("<y>⚙️ Daily combo is disabled.</y>")
             return True
         try:
             cards = self.mcf_api.get_lottery_cards()
             if not cards:
-                raise Exception("Failed to get combo cards from api.")
+                raise Exception("Failed to get combo cards from API.")
 
             payload = {
-                "cardIdStr": cards,  # mast be: 106,220,303
+                "cardIdStr": cards,  # must be: 106,220,303
             }
             res: dict = self.http.post(
                 url="miniapps/api/mine_active/JoinMineAcctive",
@@ -98,7 +98,7 @@ class City:
                 raise Exception(error_message)
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to solve daily combo for <c>{self.mcf_api.account_name}</c> ...</r>"
+                f"<r>❌ Failed to solve daily combo for <c>{self.mcf_api.account_name}</c>.</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False

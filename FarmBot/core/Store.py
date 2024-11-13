@@ -95,13 +95,13 @@ class Store:
                     continue
                 if not self._make_prop_order(sell_id):
                     continue
-                self.log.info(f"<g>Successfully</g> ordered <y>{prop.desc}</y> ...")
+                self.log.info(f"<g>✅ Successfully</g> ordered <y>{prop.desc}</y> ...")
                 time.sleep(random.randint(1, 2))
                 if not self._apply_prop(
                     prop.prop_id, True if prop_name == "spin" else False
                 ):
                     continue
-                self.log.info(f"<g>Successfully</g> applyed <y>{prop.desc}</y> ...")
+                self.log.info(f"<g>✅ Successfully</g> applied <y>{prop.desc}</y> ...")
                 time.sleep(random.randint(1, 2))
 
             return True
@@ -171,7 +171,7 @@ class Store:
                 if reward_list:
                     reward = reward_list[0].get("name", "")
                     self.log.info(
-                        f"<g>Box reward <y>{reward}</y> for <c>{self.account_name}</c>!</g>"
+                        f"<g>🎁 Box reward <y>{reward}</y> for <c>{self.account_name}</c>!</g>"
                     )
 
             return True
@@ -242,7 +242,7 @@ class Store:
     def _get_existing_skins(self):
         self._get_all_skins()
         if not self.all_skins or len(self.all_skins) <= 0:
-            self.log.info(f"All skins local data is empty ...")
+            self.log.info(f"<y>All skins local data is empty ...</y>")
             return
         existing_skins = [skin for skin in self.all_skins if skin.stock > 0]
         return existing_skins

@@ -5,7 +5,15 @@ from mcf_utils.tgAccount import tgAccount as TG
 
 
 class MCFAPI:
-    def __init__(self, log: Logger, bot_globals: dict, account_name, proxy, tgAccount, web_app_query):
+    def __init__(
+        self,
+        log: Logger,
+        bot_globals: dict,
+        account_name,
+        proxy,
+        tgAccount,
+        web_app_query,
+    ):
         self.log = log
         self.bot_globals = bot_globals
         self.account_name = account_name
@@ -30,7 +38,7 @@ class MCFAPI:
         response = apiObj.get_task_answer(self.license_key, data)
         time.sleep(3)
         if "error" in response:
-            self.log.error(f"<y>⭕ API Error: {response['error']}</y>")
+            self.log.error(f"<r>⭕ API Error: {response['error']}</r>")
             return None
         elif response.get("status") == "success":
             return response
@@ -50,6 +58,7 @@ class MCFAPI:
                 return None
             return resp.get("cards")
         except Exception as e:
+            self.log.error(f"<r>❌ Error getting lottery cards: {str(e)}</r>")
             return None
 
     def get_task_keyword(self, task_id, task_title):
@@ -64,6 +73,7 @@ class MCFAPI:
                 return None
             return resp.get("answer")
         except Exception as e:
+            self.log.error(f"<r>❌ Error getting task keyword: {str(e)}</r>")
             return None
 
     def get_invite_link(self, url):
@@ -77,6 +87,7 @@ class MCFAPI:
                 return None
             return resp
         except Exception as e:
+            self.log.error(f"<r>❌ Error getting invite link: {str(e)}</r>")
             return None
 
     async def start_bot(self, bot_id, ref_link):
@@ -91,14 +102,16 @@ class MCFAPI:
                 MuteBot=True,
             )
             await tg.getWebViewData()
-            self.log.info(f"<g>✅ Bot <c>{bot_id}</c> started!</g>")
+            self.log.info(f"<g>✅ Bot <c>{bot_id}</c> started successfully!</g>")
             return True
         except Exception as e:
+            self.log.error(f"<r>❌ Error starting bot <c>{bot_id}</c>: {str(e)}</r>")
             return False
 
     async def set_name(self, checkData):
         tgMe = self.tgAccount.me if self.tgAccount.me else None
         if tgMe is None:
+            self.log.error("<r>❌ Telegram account not found</r>")
             return False
         try:
             tgMe.first_name = tgMe.first_name or ""
@@ -107,13 +120,17 @@ class MCFAPI:
                 await self.tgAccount.setName(
                     tgMe.first_name, tgMe.last_name + checkData
                 )
+            self.log.info("<g>✅ Name set successfully!</g>")
             return True
         except Exception as e:
+            self.log.error(f"<r>❌ Error setting name: {str(e)}</r>")
             return False
 
     async def join_chat(self, channel_url):
         try:
             await self.tgAccount.joinChat(channel_url)
+            self.log.info(f"<g>✅ Joined chat: {channel_url}</g>")
             return True
         except Exception as e:
+            self.log.error(f"<r>❌ Error joining chat: {str(e)}</r>")
             return False

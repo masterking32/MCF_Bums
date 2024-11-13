@@ -27,7 +27,7 @@ class Friends:
         self.balances: list[FriendModel.Balance] = None
 
     def get_friends(self, page=1, page_size=10):
-        self.log.info(f"Getting friends ...")
+        self.log.info(f"🔍 <g>Getting friends...</g>")
         try:
             payload = {
                 "page": page,
@@ -54,13 +54,13 @@ class Friends:
 
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to get friends for <c>{self.mcf_api.account_name}</c> ...</r>"
+                f"❌ <r>Failed to get friends for <c>{self.mcf_api.account_name}</c>...</r>"
             )
-            self.log.error(f"<r>❌ {str(e)}</r>")
+            self.log.error(f"❌ <r>{str(e)}</r>")
             return False
 
     def get_balance(self):
-        self.log.info(f"Getting friends reward ...")
+        self.log.info(f"🔍 <g>Getting friends' rewards...</g>")
         try:
             resp: dict = self.http.get(
                 url="miniapps/api/wallet/balance",
@@ -69,7 +69,7 @@ class Friends:
                 raise Exception("RESPONSE_IS_NULL")
             if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
                 error_message = resp.get(
-                    "msg", "Unknown error occurred while getting friends balance."
+                    "msg", "Unknown error occurred while getting friends' balance."
                 )
                 raise Exception(error_message)
 
@@ -79,13 +79,13 @@ class Friends:
 
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to get friends balance for <c>{self.mcf_api.account_name}</c> ...</r>"
+                f"❌ <r>Failed to get friends' balance for <c>{self.mcf_api.account_name}</c>...</r>"
             )
-            self.log.error(f"<r>❌ {str(e)}</r>")
+            self.log.error(f"❌ <r>{str(e)}</r>")
             return False
 
     def claim_reward(self):
-        self.log.info(f"Claiming friends reward ...")
+        self.log.info(f"🎁 <g>Claiming friends' rewards...</g>")
         try:
             # TODO: figureout
             # W     - ID with lowest amount ?
@@ -108,16 +108,14 @@ class Friends:
             )
 
             if not is_claim_available:
-                self.log.info(f"Nothing to claim ...")
+                self.log.info(f"ℹ️ <y>Nothing to claim...</y>")
                 return True
-            # min_id = min(item.id for item in self.balances)
-            # max_id = max(item.id for item in self.balances)
+
             payload = {
                 "": "undefined",
             }
             resp: dict = self.http.post(
                 url="miniapps/api/wallet/W70001To80001",
-                # url=f"miniapps/api/wallet/W{min_id}To{max_id}", # Not found
                 data=payload,
             )
             if not resp:
@@ -131,7 +129,7 @@ class Friends:
 
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to claim balance for <c>{self.mcf_api.account_name}</c> ...</r>"
+                f"❌ <r>Failed to claim balance for <c>{self.mcf_api.account_name}</c>...</r>"
             )
-            self.log.error(f"<r>❌ {str(e)}</r>")
+            self.log.error(f"❌ <r>{str(e)}</r>")
             return False
