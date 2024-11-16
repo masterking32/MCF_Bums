@@ -208,7 +208,7 @@ class Tasks:
                         if self.finish_task(task):
                             self.log_task_reward(task)
                     elif task.task_type == "level" and task.type == "index":
-                        req_level = int(task.name.strip()[-1])
+                        req_level = int(task.name.split("LVL")[1])
                         user_level = self.profile.game_profile.current_level
                         if not req_level and req_level <= 0:
                             await asyncio.sleep(random.randint(1, 2))
