@@ -101,7 +101,7 @@ class Upgrades:
             return True
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to upgrade {skill_desc} skill for <c>{self.mcf_api.account_name}</c>!</r>"
+                f"<r>❌ Failed to upgrade {skill_desc} skill {skill.id} for <c>{self.mcf_api.account_name}</c>!</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
@@ -126,7 +126,8 @@ class Upgrades:
 
         for upgrade in self.upgrades:
             if (
-                upgrade.status == 1
+                upgrade.next_lvl_price > 0
+                and upgrade.status == 1
                 and upgrade.req_profile_lvl <= self.profile.game_profile.current_level
                 and upgrade.next_lvl_price < current_balance
                 and upgrade.req_invites <= self.profile.user_profile.invites_count
@@ -167,6 +168,8 @@ class Upgrades:
         self.tap_upgrades.sort(key=lambda upgrade: upgrade.next_lvl_price)
 
         for upgrade in self.tap_upgrades:
+            if upgrade.next_lvl_price <= 0:
+                continue
             lvl_price = upgrade.next_lvl_price
             if total_upgrades_price + lvl_price < current_balance:
                 performing_upgrades.append(upgrade)
