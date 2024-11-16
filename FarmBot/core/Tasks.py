@@ -279,7 +279,9 @@ class Tasks:
                 error_message = resp.get(
                     "msg", f"Unknown error occurred while finishing task {task.id}"
                 )
-                raise Exception(error_message + ", pwd may be wrong." if pwd else "")
+                if pwd:
+                    error_message += ", pwd may be wrong."
+                raise Exception(error_message)
 
             self.TaskFinished = True
             time.sleep(random.randint(3, 5))
