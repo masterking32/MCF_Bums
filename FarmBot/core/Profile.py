@@ -135,7 +135,7 @@ class Profile:
             today_data = [day for day in days if day["status"] == 1]
             today = ProfileModel.CheckinDay(today_data[-1]) if today_data else None
 
-            next_day_data = [day for day in days if day["status"] == 2]
+            next_day_data = [day for day in days if day["status"] != 1]
             next_day = (
                 ProfileModel.CheckinDay(next_day_data[0]) if next_day_data else None
             )
