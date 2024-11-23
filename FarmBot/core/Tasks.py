@@ -105,9 +105,9 @@ class Tasks:
                         if self.finish_task(task, pwd):
                             self.log_task_reward(task)
                         continue
-                    elif task.task_type == "nickname_check" and utils.getConfig(
-                        "auto_change_name", True
-                    ):
+                    elif task.task_type == "nickname_check":
+                        if not utils.getConfig("auto_change_name", True):
+                            continue
                         if task.copy_text in self.profile.user_profile.nickname:
                             if self.finish_task(task):
                                 self.log_task_reward(task)
@@ -306,7 +306,7 @@ class Tasks:
 
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to finish task {task.id} for <c>{self.mcf_api.account_name}</c> ...</r>"
+                f"<r>❌ Failed to finish task <y>{task.name}</y> (id: <y>{task.id}</y>) for <c>{self.mcf_api.account_name}</c> ...</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
