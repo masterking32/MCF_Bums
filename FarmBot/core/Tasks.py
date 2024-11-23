@@ -24,7 +24,6 @@ class Tasks:
         self.profile: Profile = profile
         self.task_mgr: TaskMgr = None
         self.TaskFinished = False
-        self.recheck_data = False
 
     def _get_tasks(self):
         try:
@@ -76,9 +75,6 @@ class Tasks:
 
             for task in incompleted_tasks:
                 try:
-                    if self.recheck_data:
-                        self.profile.get_game_data()
-                        self.recheck_data = True
                     self.log.info(f"<g>📝 Performing task: <y>{task.name}</y> ...</g>")
 
                     if "boost" in task.name.lower() or "?boost" in task.url.lower():
@@ -304,8 +300,8 @@ class Tasks:
                 raise Exception(error_message)
 
             self.TaskFinished = True
-            self.recheck_data = True
             time.sleep(random.randint(3, 5))
+            self.profile.get_game_data()
             return True
 
         except Exception as e:
