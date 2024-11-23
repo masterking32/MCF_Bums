@@ -69,18 +69,25 @@ class Tasks:
                 and (
                     "boost" not in task.name.lower()
                     and "?boost" not in task.url.lower()
+                    and task.type not in ["transferTon"]
                 )
             ]
 
             for task in incompleted_tasks:
                 try:
+                    self.profile.get_game_data()
                     self.log.info(f"<g>📝 Performing task: <y>{task.name}</y> ...</g>")
+
                     if "boost" in task.name.lower() or "?boost" in task.url.lower():
                         continue
                     elif (
                         "Click to earn BumsCoins" in task.name
                         and self.profile.game_profile.current_level < 5
                     ):
+                        continue
+                    elif task.type in ["set_emoji", "set_home_screen"]:
+                        if self.finish_task(task):
+                            self.log_task_reward(task)
                         continue
                     elif task.task_type == "pwd":
                         if not utils.getConfig("auto_pwd_tasks", True):
@@ -98,13 +105,20 @@ class Tasks:
                         await asyncio.sleep(random.randint(1, 2))
                         if self.finish_task(task, pwd):
                             self.log_task_reward(task)
+                        continue
                     elif task.task_type == "nickname_check" and utils.getConfig(
                         "auto_change_name", True
                     ):
-                        if not self.mcf_api.tgAccount:
+                        if task.copy_text in self.profile.user_profile.nickname:
+                            if self.finish_task(task):
+                                self.log_task_reward(task)
                             continue
-
-                        if task.copy_text not in self.profile.user_profile.nickname:
+                        else:
+                            if not self.mcf_api.tgAccount:
+                                self.log.warning(
+                                    "⚠️ <y>Unnable to set name for non session account.</y>"
+                                )
+                                continue
                             if await self.mcf_api.set_name(task.copy_text):
                                 self.log.info(
                                     f"<g>✅ Added <c>{task.copy_text}</c> to last name to complete the <c>{task.name}</c> task</g>"
@@ -114,12 +128,11 @@ class Tasks:
                                 )
                             else:
                                 self.log.warning("⚠️ <r>Failed to set name.</r>")
-                        else:
-                            if self.finish_task(task):
-                                self.log_task_reward(task)
+                            continue
                     elif task.name == "Like and repost the latest news":
                         if self.finish_task(task):
                             self.log_task_reward(task)
+                        continue
                     elif (
                         "t.me" in task.url
                         and "boost/" in task.url
@@ -146,6 +159,7 @@ class Tasks:
                         await asyncio.sleep(random.randint(1, 2))
                         if self.finish_task(task):
                             self.log_task_reward(task)
+                        continue
                     elif task.url is not None and task.url != "":
                         if "t.me" not in task.url:
                             if self.finish_task(task):
@@ -207,6 +221,7 @@ class Tasks:
                         await asyncio.sleep(random.randint(3, 5))
                         if self.finish_task(task):
                             self.log_task_reward(task)
+                        continue
                     elif task.task_type == "level" and task.type == "index":
                         req_level = int(task.name.split("LVL")[1])
                         user_level = self.profile.game_profile.current_level
@@ -216,6 +231,7 @@ class Tasks:
                         if user_level >= req_level:
                             if self.finish_task(task):
                                 self.log_task_reward(task)
+                            continue
                         else:
                             self.log.info(
                                 f"<g>⚠️ Insufficient level to accomplish the task. Requires <y>{req_level}</y>, yours is <y>{user_level}</y>.</g>"
@@ -224,6 +240,7 @@ class Tasks:
                         if self.profile.tap_data.collect_seq_no > 0:
                             if self.finish_task(task):
                                 self.log_task_reward(task)
+                            continue
                     elif task.task_type == "invite_group":
                         if (
                             task.invites_required > 0
@@ -231,6 +248,7 @@ class Tasks:
                         ):
                             if self.finish_task(task):
                                 self.log_task_reward(task)
+                            continue
                         else:
                             self.log.info(
                                 f"<g>⚠️ Insufficient friends to accomplish the task. Requires <y>{task.invites_required}</y>, yours is <y>{task.invites_progress}</y>.</g>"
@@ -238,7 +256,6 @@ class Tasks:
                             await asyncio.sleep(random.randint(1, 2))
                             continue
 
-                    self.profile.get_game_data()
                     await asyncio.sleep(random.randint(1, 2))
                 except Exception as e:
                     self.log.error(f"❌ <r>{str(e)}</r>")
