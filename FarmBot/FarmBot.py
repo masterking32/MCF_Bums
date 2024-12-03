@@ -18,6 +18,7 @@ from .core.Upgrades import Upgrades
 from .core.City import City
 from .core.Tasks import Tasks
 from .core.Friends import Friends
+from .core.NewYearAchievement import NewYearAchievement
 
 MasterCryptoFarmBot_Dir = os.path.dirname(
     os.path.dirname(os.path.abspath(__file__ + "/../../"))
@@ -78,6 +79,8 @@ class FarmBot:
 
             if not self.profile.get_game_data():
                 return
+            
+            self.profile.get_bot_message_id()
 
             await asyncio.sleep(random.randint(1, 2))
 
@@ -118,6 +121,9 @@ class FarmBot:
 
             self.upgrades = Upgrades(self.log, self.http, self.mcf_api, self.profile)
             self.upgrades.perform_upgrades()
+
+            self.nya = NewYearAchievement(self.log, self.http, self.mcf_api, self.profile)
+            self.nya.perform_days()
 
         except Exception as e:
             self.log.error(

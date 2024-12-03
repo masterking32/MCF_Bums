@@ -22,6 +22,7 @@ class Profile:
         self._mine_info: ProfileModel.MineData = None
         self._user_prop: ProfileModel.UserProp = None
         self._not_coin_rewards: list[ProfileModel.UserProp.PropObject] = None
+        self.bot_message_id = ""
 
     @property
     def data(self):
@@ -269,3 +270,35 @@ class Profile:
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
+
+    def get_bot_message_id(self, type="hbb"):
+        try:
+            self.log.info(
+                f"🟡 <y>Getting bot message id ... </y>"
+            )
+            payload = {
+                "type": type,
+            }
+            resp: dict = self.http.post(
+                url="miniapps/api/user_game/getBotMessageId",
+                data=payload,
+            )
+
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+                error_message = resp.get(
+                    "msg", "Unknown error occurred while getting bot message id."
+                )
+                raise Exception(error_message)
+
+            id = resp.get("data").get("id")
+            self.bot_message_id = id
+
+            return id
+        except Exception as e:
+            self.log.error(
+                f"<r>❌ Failed get bot message id <c>{self.account_name}</c>!</r>"
+            )
+            self.log.error(f"<r>❌ {str(e)}</r>")
+            return None
