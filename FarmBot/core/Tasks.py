@@ -69,7 +69,7 @@ class Tasks:
                 and (
                     "boost" not in task.name.lower()
                     and "?boost" not in task.url.lower()
-                    and task.type not in ["transferTon"]
+                    and task.type not in ["transferTon", "wallet"]
                 )
             ]
 
