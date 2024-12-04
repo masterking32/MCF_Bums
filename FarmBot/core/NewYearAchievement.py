@@ -75,6 +75,33 @@ class NewYearAchievement:
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
 
+    def finish_day(self, id):
+        try:
+            payload = {
+                "id": id,
+            }
+
+            resp: dict = self.http.post(
+                url="miniapps/api/active_christmas/finish",
+                data=payload,
+            )
+
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+                error_message = resp.get(
+                    "msg", f"Unknown error occurred while finishing day <c>{id}</c>."
+                )
+                raise Exception(error_message)
+
+            return True
+        except Exception as e:
+            self.log.error(
+                f"<r>❌ Failed to finish day <c>{id}</c> <c>{self.mcf_api.account_name}</c>!</r>"
+            )
+            self.log.error(f"<r>❌ {str(e)}</r>")
+            return False
+
     def perform_days(self):
         if not self.days or len(self.days) <= 0:
             self.get_days()
@@ -85,11 +112,21 @@ class NewYearAchievement:
             is_finished = day.get("isFinish", -999)
             day_id = day.get("id", -1)
             day_name = day.get("name", "Unknown").strip()
-            if is_finished in [0, 1]:
+            day_type = day.get("type", "Unknown")
+            if is_finished == 1:
                 # self.log.info(
                 #     f"🟡 <g>Day <c>{day_id} - {day_name}</c> already openned ... </g>"
                 # )
                 continue
+            if is_finished == 0:
+                if day_type in ["ton", "star", "invite"]:
+                    continue
+                if day_id in [4]:
+                    if self.finish_day(day_id):
+                        self.log.info(
+                            f"✔️ <g>Day <c>{day_id}</c> - <y>{day_name}</y> finished ... </g>"
+                        )
+                        continue
             if is_finished == -1:
                 if self.open_day_card(day_id):
                     self.log.info(
