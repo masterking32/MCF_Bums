@@ -5,6 +5,7 @@ from .MCFAPI import MCFAPI
 import time, random
 from logging import Logger
 from utilities import utilities as utils
+import asyncio
 
 
 class NewYearAchievement:
@@ -75,10 +76,11 @@ class NewYearAchievement:
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
 
-    def finish_day(self, id):
+    def finish_day(self, day):
         try:
+            day_id = day.get("id", -1)
             payload = {
-                "id": id,
+                "id": day_id,
             }
 
             resp: dict = self.http.post(
@@ -102,7 +104,7 @@ class NewYearAchievement:
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
 
-    def perform_days(self):
+    async def perform_days(self):
         if not self.days or len(self.days) <= 0:
             self.get_days()
         self.log.info(
@@ -122,7 +124,13 @@ class NewYearAchievement:
                 if day_type in ["ton", "star", "invite"]:
                     continue
                 if day_id in [4]:
-                    if self.finish_day(day_id):
+                    if not self.mcf_api.tgAccount:
+                        continue
+                    if not utils.getConfig("auto_join_channels", True):
+                        continue
+                    await self.mcf_api.join_chat(day.get("jumpUrl"))
+                    await asyncio.sleep(random.randint(1, 3))
+                    if self.finish_day(day):
                         self.log.info(
                             f"✔️ <g>Day <c>{day_id}</c> - <y>{day_name}</y> finished ... </g>"
                         )
@@ -136,3 +144,16 @@ class NewYearAchievement:
                         self.log.info(
                             f"🟡 <y>You need to complete it manually in game ... </y>"
                         )
+                        continue
+                    if day_id in [4]:
+                        if not self.mcf_api.tgAccount:
+                            continue
+                        if not utils.getConfig("auto_join_channels", True):
+                            continue
+                        await self.mcf_api.join_chat(day.get("jumpUrl"))
+                        await asyncio.sleep(random.randint(1, 3))
+                        if self.finish_day(day):
+                            self.log.info(
+                                f"✔️ <g>Day <c>{day_id}</c> - <y>{day_name}</y> finished ... </g>"
+                            )
+                            continue

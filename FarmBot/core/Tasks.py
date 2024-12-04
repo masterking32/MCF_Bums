@@ -176,23 +176,11 @@ class Tasks:
                             self.skipping_tasks.append(task.id)
                             continue
 
-                        channel_url = task.url
-                        if "+" not in channel_url:
-                            channel_url = (
-                                channel_url.replace("https://t.me/", "")
-                                .replace("@", "")
-                                .replace("boost/", "")
-                            )
-                        channel_url = (
-                            channel_url.split("/")[0]
-                            if "/" in channel_url
-                            else channel_url
-                        )
                         self.log.info(
-                            f"<g>📝 Attempting to join the <c>{channel_url}</c> channel to complete the <c>{task.name}</c> task</g>"
+                            f"<g>📝 Attempting to join the <c>{task.url}</c> channel to complete the <c>{task.name}</c> task</g>"
                         )
 
-                        await self.mcf_api.join_chat(channel_url)
+                        await self.mcf_api.join_chat(task.url)
                         await asyncio.sleep(random.randint(3, 5))
                         if self.finish_task(task):
                             self.log_task_reward(task)

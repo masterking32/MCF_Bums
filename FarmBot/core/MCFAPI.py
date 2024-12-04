@@ -128,6 +128,18 @@ class MCFAPI:
 
     async def join_chat(self, channel_url):
         try:
+            channel_url = channel_url
+            if "+" not in channel_url:
+                channel_url = (
+                    channel_url.replace("https://t.me/", "")
+                    .replace("@", "")
+                    .replace("boost/", "")
+                )
+            channel_url = (
+                channel_url.split("/")[0]
+                if "/" in channel_url
+                else channel_url
+            )
             await self.tgAccount.joinChat(channel_url)
             self.log.info(f"<g>✅ Joined chat: {channel_url}</g>")
             return True

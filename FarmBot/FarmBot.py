@@ -123,7 +123,7 @@ class FarmBot:
             self.upgrades.perform_upgrades()
 
             self.nya = NewYearAchievement(self.log, self.http, self.mcf_api, self.profile)
-            self.nya.perform_days()
+            await self.nya.perform_days()
 
         except Exception as e:
             self.log.error(
