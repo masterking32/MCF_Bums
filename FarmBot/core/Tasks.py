@@ -24,6 +24,7 @@ class Tasks:
         self.profile: Profile = profile
         self.task_mgr: TaskMgr = None
         self.TaskFinished = False
+        self.skipping_tasks = []
 
     def _get_tasks(self):
         try:
@@ -75,6 +76,9 @@ class Tasks:
 
             for task in incompleted_tasks:
                 try:
+                    if task.id in self.skipping_tasks:
+                        continue
+
                     self.log.info(f"<g>📝 Performing task: <y>{task.name}</y> ...</g>")
                     pass
                     if (
@@ -94,13 +98,14 @@ class Tasks:
                             self.log.info(
                                 f"⚙️ <y>Auto complete YouTube tasks disabled ...</y>"
                             )
-                            await asyncio.sleep(random.randint(1, 2))
+                            self.skipping_tasks.append(task.id)
                             continue
                         pwd = self.mcf_api.get_task_keyword(task.url, task.name)
                         if not pwd:
                             self.log.info(
                                 f"🔑 <y>Password for task {task.name} not found on API ...</y>"
                             )
+                            self.skipping_tasks.append(task.id)
                             continue
                         await asyncio.sleep(random.randint(1, 2))
                         if self.finish_task(task, pwd):
@@ -109,6 +114,7 @@ class Tasks:
                     elif task.task_type == "nickname_check":
                         if not utils.getConfig("auto_change_name", True):
                             self.log.info(f"⚙️ <y>Auto change name disabled ...</y>")
+                            self.skipping_tasks.append(task.id)
                             continue
                         if task.copy_text in self.profile.user_profile.nickname:
                             if self.finish_task(task):
@@ -119,6 +125,7 @@ class Tasks:
                                 self.log.warning(
                                     "⚠️ <y>Cannot change name for a non-session account.</y>"
                                 )
+                                self.skipping_tasks.append(task.id)
                                 continue
                             if await self.mcf_api.set_name(task.copy_text):
                                 self.log.info(
@@ -132,6 +139,7 @@ class Tasks:
                             continue
                     elif "t.me" in task.url:
                         if not self.mcf_api.tgAccount:
+                            self.skipping_tasks.append(task.id)
                             continue
 
                         if (
@@ -144,6 +152,7 @@ class Tasks:
                         ):
                             if not utils.getConfig("auto_start_bots", True):
                                 self.log.info(f"⚙️ <y>Auto start bot disabled ...</y>")
+                                self.skipping_tasks.append(task.id)
                                 continue
 
                             api_resp = self.mcf_api.get_invite_link(task.url)
@@ -164,6 +173,7 @@ class Tasks:
 
                         if not utils.getConfig("auto_join_channels", True):
                             self.log.info(f"⚙️ <y>Auto join channels disabled ...</y>")
+                            self.skipping_tasks.append(task.id)
                             continue
 
                         channel_url = task.url
@@ -191,18 +201,19 @@ class Tasks:
                         req_level = int(task.name.split("LVL")[1])
                         user_level = self.profile.game_profile.current_level
                         if not req_level or req_level <= 0:
-                            await asyncio.sleep(random.randint(1, 2))
                             continue
                         if user_level < req_level:
                             self.log.info(
                                 f"<g>⚠️ Insufficient level to accomplish the task. Requires <y>{req_level}</y>, yours is <y>{user_level}</y>.</g>"
                             )
+                            self.skipping_tasks.append(task.id)
                             continue
                         if self.finish_task(task):
                             self.log_task_reward(task)
                         continue
                     elif task.task_type == "tap_coin" and task.type == "upgrade":
                         if self.profile.game_profile.current_level < 5:
+                            self.skipping_tasks.append(task.id)
                             continue
                         if self.profile.tap_data.collect_seq_no > 0:
                             if self.finish_task(task):
@@ -213,6 +224,7 @@ class Tasks:
                             task.invites_required > 0
                             and task.invites_progress < task.invites_required
                         ):
+                            self.skipping_tasks.append(task.id)
                             self.log.info(
                                 f"<g>⚠️ Insufficient friends to accomplish the task. Requires <y>{task.invites_required}</y>, yours is <y>{task.invites_progress}</y>.</g>"
                             )
