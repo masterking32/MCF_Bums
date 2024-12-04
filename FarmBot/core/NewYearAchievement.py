@@ -132,6 +132,7 @@ class NewYearAchievement:
                     self.log.info(
                         f"✔️ <g>Day <c>{day_id}</c> - <y>{day_name}</y> openned ... </g>"
                     )
-                    self.log.info(
-                        f"🟡 <y>You need to complete it manually in game ... </y>"
-                    )
+                    if day_type in ["ton", "star", "invite"]:
+                        self.log.info(
+                            f"🟡 <y>You need to complete it manually in game ... </y>"
+                        )
