@@ -120,10 +120,21 @@ class NewYearAchievement:
                 #     f"🟡 <g>Day <c>{day_id} - {day_name}</c> already openned ... </g>"
                 # )
                 continue
+            if is_finished == -1:
+                if self.open_day_card(day_id):
+                    self.log.info(
+                        f"✔️ <g>Day <c>{day_id}</c> - <y>{day_name}</y> openned ... </g>"
+                    )
+                    if day_type in ["ton", "star", "invite"]:
+                        # self.log.info(
+                        #     f"🟡 <y>You need to complete it manually in game ... </y>"
+                        # )
+                        continue
+                    is_finished = 0
             if is_finished == 0:
                 if day_type in ["ton", "star", "invite"]:
                     continue
-                if day_id in [4]:
+                if day_id == 4:
                     if not self.mcf_api.tgAccount:
                         continue
                     if not utils.getConfig("auto_join_channels", True):
@@ -135,25 +146,3 @@ class NewYearAchievement:
                             f"✔️ <g>Day <c>{day_id}</c> - <y>{day_name}</y> finished ... </g>"
                         )
                         continue
-            if is_finished == -1:
-                if self.open_day_card(day_id):
-                    self.log.info(
-                        f"✔️ <g>Day <c>{day_id}</c> - <y>{day_name}</y> openned ... </g>"
-                    )
-                    if day_type in ["ton", "star", "invite"]:
-                        self.log.info(
-                            f"🟡 <y>You need to complete it manually in game ... </y>"
-                        )
-                        continue
-                    if day_id in [4]:
-                        if not self.mcf_api.tgAccount:
-                            continue
-                        if not utils.getConfig("auto_join_channels", True):
-                            continue
-                        await self.mcf_api.join_chat(day.get("jumpUrl"))
-                        await asyncio.sleep(random.randint(1, 3))
-                        if self.finish_day(day):
-                            self.log.info(
-                                f"✔️ <g>Day <c>{day_id}</c> - <y>{day_name}</y> finished ... </g>"
-                            )
-                            continue
