@@ -41,6 +41,7 @@ class Auth:
             payload = {
                 "invitationCode": "",
                 "initData": self.mcf_api.web_app_query,
+                "act": "",
             }
             if self.mcf_api.ref_code != "":
                 ref_code = self.mcf_api.tgAccount.ReferralToken
