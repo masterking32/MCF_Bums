@@ -81,6 +81,8 @@ class FarmBot:
             if not self.profile.get_game_data():
                 return
             
+            self.profile.get_map_info()
+            
             self.profile.get_bot_message_id()
 
             await asyncio.sleep(random.randint(1, 2))

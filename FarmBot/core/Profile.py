@@ -23,6 +23,7 @@ class Profile:
         self._user_prop: ProfileModel.UserProp = None
         self._not_coin_rewards: list[ProfileModel.UserProp.PropObject] = None
         self.bot_message_id = ""
+        self.active_map = {}
 
     @property
     def data(self):
@@ -104,6 +105,30 @@ class Profile:
         except Exception as e:
             self.log.error(
                 f"<r>❌ Failed to acquire game data for <c>{self.account_name}</c>!</r>"
+            )
+            self.log.error(f"<r>❌ {str(e)}</r>")
+            return False
+        
+    def get_map_info(self):
+        try:
+            resp: dict = self.http.get(
+                url="miniapps/api/active/info",
+            )
+
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+                error_message = resp.get(
+                    "msg", "Unknown error occurred while getting map info."
+                )
+                raise Exception(error_message)
+            
+            self.active_map = resp.get("data", {}).get("activeMap")
+
+            return True
+        except Exception as e:
+            self.log.error(
+                f"<r>❌ Failed to get map info <c>{self.account_name}</c>!</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
