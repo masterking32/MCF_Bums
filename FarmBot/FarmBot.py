@@ -19,6 +19,7 @@ from .core.City import City
 from .core.Tasks import Tasks
 from .core.Friends import Friends
 from .core.NewYearAchievement import NewYearAchievement
+from .core.Slots import Slots
 
 MasterCryptoFarmBot_Dir = os.path.dirname(
     os.path.dirname(os.path.abspath(__file__ + "/../../"))
@@ -119,11 +120,16 @@ class FarmBot:
             self.city.do_daily_combo()
             await asyncio.sleep(random.randint(1, 2))
 
+            self.nya = NewYearAchievement(self.log, self.http, self.mcf_api, self.profile)
+            await self.nya.perform_days()
+
+            self.slots = Slots(self.log, self.http, self.mcf_api, self.profile)
+            self.slots.spin_slots()
+
             self.upgrades = Upgrades(self.log, self.http, self.mcf_api, self.profile)
             self.upgrades.perform_upgrades()
 
-            self.nya = NewYearAchievement(self.log, self.http, self.mcf_api, self.profile)
-            await self.nya.perform_days()
+            
 
         except Exception as e:
             self.log.error(

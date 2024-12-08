@@ -91,6 +91,13 @@
     "description": "Only for pyrogram/telethon"
   },
   {
+    "key": "auto_spin_slots",
+    "name": "Auto spin slots",
+    "type": "checkbox",
+    "default_value": "on",
+    "description": ""
+  },
+  {
     "key": "referral_token",
     "name": "Referral Token",
     "type": "text",
