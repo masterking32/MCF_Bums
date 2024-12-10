@@ -107,9 +107,7 @@ class NewYearAchievement:
     async def perform_days(self):
         if not self.days or len(self.days) <= 0:
             self.get_days()
-        self.log.info(
-            f"🟡 <g>Performing new year achievement days ... </g>"
-        )
+        self.log.info(f"🟡 <g>Performing new year achievement days ... </g>")
         for day in self.days:
             is_finished = day.get("isFinish", -999)
             day_id = day.get("id", -1)
@@ -125,14 +123,14 @@ class NewYearAchievement:
                     self.log.info(
                         f"✔️ <g>Day <c>{day_id}</c> - <y>{day_name}</y> openned ... </g>"
                     )
-                    if day_type in ["ton", "star", "invite"]:
+                    if day_type in ["ton", "star"]:
                         # self.log.info(
                         #     f"🟡 <y>You need to complete it manually in game ... </y>"
                         # )
                         continue
                     is_finished = 0
             if is_finished == 0:
-                if day_type in ["ton", "star", "invite"]:
+                if day_type in ["ton", "star"]:
                     continue
                 if day_id == 4:
                     if not self.mcf_api.tgAccount:
@@ -152,3 +150,19 @@ class NewYearAchievement:
                             f"✔️ <g>Day <c>{day_id}</c> - <y>{day_name}</y> finished ... </g>"
                         )
                         continue
+                if "Invite friends" in day_name:
+                    nums = []
+                    for part in day_name.split():
+                        clean_part = "".join(char for char in part if char.isdigit())
+                        if clean_part:
+                            nums.append(int(clean_part))
+                    if len(nums) < 2:
+                        continue
+                    target = nums[0]
+                    progress = nums[1]
+                    if progress >= target:
+                        if self.finish_day(day):
+                            self.log.info(
+                                f"✔️ <g>Day <c>{day_id}</c> - <y>{day_name}</y> finished ... </g>"
+                            )
+                            continue
