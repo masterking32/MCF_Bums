@@ -115,7 +115,7 @@ class NewYearAchievement:
         for day in self.days:
             is_finished = day.get("isFinish", -999)
             day_id = day.get("id", -1)
-            day_name = day.get("name", "Unknown").strip()
+            day_name = day.get("name", "Unknown").replace("\n", " ").strip()
             day_type = day.get("type", "Unknown")
             if is_finished == 1:
                 # self.log.info(
