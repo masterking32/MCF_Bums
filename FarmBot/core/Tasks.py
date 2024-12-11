@@ -30,6 +30,7 @@ class Tasks:
         try:
             resp: dict = self.http.get(
                 url="miniapps/api/task/lists",
+                display_errors=True,
             )
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
@@ -253,6 +254,7 @@ class Tasks:
                 headers=headers,
                 use_boundary=False,
                 data=payload,
+                display_errors=True,
             )
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")

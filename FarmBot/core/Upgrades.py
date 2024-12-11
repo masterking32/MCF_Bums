@@ -28,6 +28,7 @@ class Upgrades:
             resp: dict = self.http.post(
                 url="miniapps/api/mine/getMineLists",
                 use_boundary=False,
+                display_errors=True,
             )
 
             if not resp:
@@ -79,6 +80,7 @@ class Upgrades:
             resp: dict = self.http.post(
                 url=url,
                 data=payload,
+                display_errors=True,
             )
 
             if not resp:

@@ -41,6 +41,7 @@ class Gangs:
             resp: dict = self.http.post(
                 url="miniapps/api/gang/gang_lists",
                 data=payload,
+                display_errors=True,
             )
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
@@ -72,6 +73,7 @@ class Gangs:
             resp: dict = self.http.post(
                 url="miniapps/api/gang/gang_join",
                 data=payload,
+                display_errors=True,
             )
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
@@ -93,7 +95,10 @@ class Gangs:
 
     def leave_gang(self):
         try:
-            resp: dict = self.http.get(url="miniapps/api/gang/gang_leave")
+            resp: dict = self.http.get(
+                url="miniapps/api/gang/gang_leave", 
+                display_errors=True,
+            )
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
             if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):

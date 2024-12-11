@@ -36,6 +36,7 @@ class Friends:
             resp: dict = self.http.post(
                 url="miniapps/api/user_game/friends",
                 data=payload,
+                display_errors=True,
             )
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
@@ -64,6 +65,7 @@ class Friends:
         try:
             resp: dict = self.http.get(
                 url="miniapps/api/wallet/balance",
+                display_errors=True,
             )
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
@@ -117,6 +119,7 @@ class Friends:
             resp: dict = self.http.post(
                 url="miniapps/api/wallet/W70001To80001",
                 data=payload,
+                display_errors=True,
             )
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")

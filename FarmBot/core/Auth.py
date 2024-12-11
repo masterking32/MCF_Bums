@@ -34,6 +34,7 @@ class Auth:
                     send_option_request=False,
                     auth_header=False,
                     only_json_response=False,
+                    display_errors=True,
                 )
             except Exception as e:
                 pass
@@ -53,6 +54,7 @@ class Auth:
                 url="miniapps/api/user/telegram_auth",
                 data=payload,
                 valid_response_code=[200, 201],
+                display_errors=True,
             )
 
             if not resp:

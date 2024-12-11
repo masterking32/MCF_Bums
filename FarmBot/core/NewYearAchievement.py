@@ -26,6 +26,7 @@ class NewYearAchievement:
         try:
             resp: dict = self.http.get(
                 url="miniapps/api/active_christmas/get_lists?language=en",
+                display_errors=True,
             )
 
             if not resp:
@@ -44,7 +45,7 @@ class NewYearAchievement:
             return True
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to new year achievements days <c>{self.mcf_api.account_name}</c>!</r>"
+                f"<r>❌ Failed to new year achievements days for <c>{self.mcf_api.account_name}</c>!</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
@@ -58,6 +59,7 @@ class NewYearAchievement:
             resp: dict = self.http.post(
                 url="miniapps/api/active_christmas/open",
                 data=payload,
+                display_errors=True,
             )
 
             if not resp:
@@ -71,7 +73,7 @@ class NewYearAchievement:
             return True
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to open day {id} <c>{self.mcf_api.account_name}</c>!</r>"
+                f"<r>❌ Failed to open day {id} for <c>{self.mcf_api.account_name}</c>!</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
@@ -79,6 +81,7 @@ class NewYearAchievement:
     def finish_day(self, day):
         try:
             day_id = day.get("id", -1)
+            day_name = day.get("name", "Unknown").replace("\n", " ").strip()
             payload = {
                 "id": day_id,
             }
@@ -86,6 +89,7 @@ class NewYearAchievement:
             resp: dict = self.http.post(
                 url="miniapps/api/active_christmas/finish",
                 data=payload,
+                display_errors=True,
             )
 
             if not resp:
@@ -99,7 +103,7 @@ class NewYearAchievement:
             return True
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to finish day <c>{id}</c> <c>{self.mcf_api.account_name}</c>!</r>"
+                f"<r>❌ Failed to finish day <c>{day_id}</c> - <c>{day_name}</c> for <c>{self.mcf_api.account_name}</c>!</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False

@@ -82,6 +82,7 @@ class Profile:
 
             resp: dict = self.http.get(
                 url=url,
+                display_errors=True,
             )
 
             if not resp:
@@ -113,6 +114,7 @@ class Profile:
         try:
             resp: dict = self.http.get(
                 url="miniapps/api/active/info",
+                display_errors=True,
             )
 
             if not resp:
@@ -140,6 +142,7 @@ class Profile:
         try:
             resp: dict = self.http.get(
                 url="miniapps/api/sign/getSignLists",
+                display_errors=True,
             )
 
             if not resp:
@@ -192,6 +195,7 @@ class Profile:
             resp: dict = self.http.post(
                 url="miniapps/api/sign/sign",
                 data=payload,
+                display_errors=True,
             )
 
             if not resp:
@@ -236,6 +240,7 @@ class Profile:
         resp: dict = self.http.post(
             url="miniapps/api/user_game/collectCoin",
             data=payload,
+            display_errors=True,
         )
         if not resp:
             raise Exception("RESPONSE_IS_NULL")
@@ -307,6 +312,7 @@ class Profile:
             resp: dict = self.http.post(
                 url="miniapps/api/user_game/getBotMessageId",
                 data=payload,
+                display_errors=True,
             )
 
             if not resp:

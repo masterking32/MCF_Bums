@@ -31,6 +31,7 @@ class Store:
         try:
             resp: dict = self.http.get(
                 url=f"miniapps/api/prop_shop/Lists?showPages={page_type}&page={page_num}&pageSize={page_size}",
+                display_errors=True,
             )
 
             if not resp:
@@ -134,6 +135,7 @@ class Store:
             resp: dict = self.http.post(
                 url="miniapps/api/prop_shop/CreateGptPayOrder",
                 data=payload,
+                display_errors=True,
             )
 
             if not resp:
@@ -165,6 +167,7 @@ class Store:
             resp: dict = self.http.post(
                 url=url,
                 data=payload,
+                display_errors=True,
             )
 
             if not resp:
@@ -233,6 +236,7 @@ class Store:
             resp: dict = self.http.post(
                 url="miniapps/api/linkage/claim_skin_blum",
                 data=payload,
+                display_errors=True,
             )
 
             if not resp:
