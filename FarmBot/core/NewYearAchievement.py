@@ -144,7 +144,7 @@ class NewYearAchievement:
                             f"✔️ <g>Day <c>{day_id}</c> - <y>{day_name}</y> finished ... </g>"
                         )
                         continue
-                if day_id == 6:
+                if day_id in [6, 11]:
                     if self.finish_day(day):
                         self.log.info(
                             f"✔️ <g>Day <c>{day_id}</c> - <y>{day_name}</y> finished ... </g>"
