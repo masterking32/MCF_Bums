@@ -81,7 +81,7 @@ class NewYearAchievement:
     def finish_day(self, day):
         try:
             day_id = day.get("id", -1)
-            day_name = day.get("name", "Unknown").replace("\n", " ").strip()
+            day_name = day.get("name", "Unknown").strip()
             payload = {
                 "id": day_id,
             }
@@ -100,10 +100,12 @@ class NewYearAchievement:
                 )
                 raise Exception(error_message)
 
+            self.log.info(f"✔️ <g>Day <c>{day_id}</c> finished.</g>")
+
             return True
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to finish day <c>{day_id}</c> - <c>{day_name}</c> for <c>{self.mcf_api.account_name}</c>!</r>"
+                f"<r>❌ Failed to finish day <c>{day_id}</c> for <c>{self.mcf_api.account_name}</c>!</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
@@ -115,7 +117,8 @@ class NewYearAchievement:
         for day in self.days:
             is_finished = day.get("isFinish", -999)
             day_id = day.get("id", -1)
-            day_name = day.get("name", "Unknown").replace("\n", " ").strip()
+            day_name: str = day.get("name", "Unknown").strip()
+
             day_type = day.get("type", "Unknown")
             if is_finished == 1:
                 # self.log.info(
@@ -124,9 +127,7 @@ class NewYearAchievement:
                 continue
             if is_finished == -1:
                 if self.open_day_card(day_id):
-                    self.log.info(
-                        f"✔️ <g>Day <c>{day_id}</c> - <y>{day_name}</y> openned ... </g>"
-                    )
+                    self.log.info(f"✔️ <g>Day <c>{day_id}</c> openned ... </g>")
                     if day_type in ["ton", "star"]:
                         # self.log.info(
                         #     f"🟡 <y>You need to complete it manually in game ... </y>"
@@ -144,15 +145,9 @@ class NewYearAchievement:
                     await self.mcf_api.join_chat(day.get("jumpUrl"))
                     await asyncio.sleep(random.randint(1, 3))
                     if self.finish_day(day):
-                        self.log.info(
-                            f"✔️ <g>Day <c>{day_id}</c> - <y>{day_name}</y> finished ... </g>"
-                        )
                         continue
                 if day_id in [6, 11]:
                     if self.finish_day(day):
-                        self.log.info(
-                            f"✔️ <g>Day <c>{day_id}</c> - <y>{day_name}</y> finished ... </g>"
-                        )
                         continue
                 if "Invite friends" in day_name:
                     nums = []
@@ -166,7 +161,4 @@ class NewYearAchievement:
                     progress = nums[1]
                     if progress >= target:
                         if self.finish_day(day):
-                            self.log.info(
-                                f"✔️ <g>Day <c>{day_id}</c> - <y>{day_name}</y> finished ... </g>"
-                            )
                             continue
