@@ -157,8 +157,8 @@ class NewYearAchievement:
                             nums.append(int(clean_part))
                     if len(nums) < 2:
                         continue
-                    target = nums[0]
-                    progress = nums[1]
+                    progress = nums[0]
+                    target = nums[1]
                     if progress >= target:
                         if self.finish_day(day):
                             continue
