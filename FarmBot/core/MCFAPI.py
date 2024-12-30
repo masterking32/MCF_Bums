@@ -29,6 +29,16 @@ class MCFAPI:
             self.start_param = "/?tgWebAppStartParam=" + self.tgAccount.ReferralToken
             # if self.tgAccount.NewStart:
 
+    def can_use(self, target_timestamp: int):
+        if target_timestamp <= 0:
+            return True
+        
+        current_timestamp = int(time.time())
+
+        if current_timestamp >= target_timestamp:
+            return False
+        return True
+
     def _api_request(self, action: str, data: dict = {}):
         if self.license_key is None:
             return None

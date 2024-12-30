@@ -146,7 +146,7 @@ class NewYearAchievement:
                     await asyncio.sleep(random.randint(1, 3))
                     if self.finish_day(day):
                         continue
-                if day_id in [6, 11, 15]:
+                if day_type == "send_good":
                     if self.finish_day(day):
                         continue
                 if "Invite friends" in day_name:
