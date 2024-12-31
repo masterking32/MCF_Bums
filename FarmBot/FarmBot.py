@@ -84,7 +84,7 @@ class FarmBot:
             
             self.profile.get_map_info()
 
-            self.town = Town(self.log, self.http, self.mcf_api)
+            self.town = Town(self.log, self.http, self.mcf_api, self.profile)
             self.town.get_my_town()
             
             self.profile.get_bot_message_id()
