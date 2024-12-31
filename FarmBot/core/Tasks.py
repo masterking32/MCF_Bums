@@ -73,6 +73,12 @@ class Tasks:
                     and "?boost" not in task.url.lower()
                     and task.type not in ["transferTon", "wallet"]
                     and task.task_type not in ["fo_mo"]
+                    and task.name
+                    not in [
+                        "Play Dropee and win daily",
+                        "TON FEST: Get your EARLY BIRD ticket now",
+                        "Gift your friend a TON Fest ticket for New Year!",
+                    ]
                 )
             ]
 
@@ -83,14 +89,11 @@ class Tasks:
 
                     self.log.info(f"<g>📝 Performing task: <y>{task.name}</y> ...</g>")
                     pass
-                    if (
-                        task.type in ["set_emoji", "set_home_screen"]
-                        or (
-                            task.url != ""
-                            and "t.me" not in task.url
-                            and task.task_type != "nickname_check"
-                            and task.task_type != "pwd"
-                        )
+                    if task.type in ["set_emoji", "set_home_screen"] or (
+                        task.url != ""
+                        and "t.me" not in task.url
+                        and task.task_type != "nickname_check"
+                        and task.task_type != "pwd"
                     ):
                         if self.finish_task(task):
                             self.log_task_reward(task)
