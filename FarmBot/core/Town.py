@@ -29,7 +29,8 @@ class Town:
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
             if resp.get("code") == -1:
-                self.log.info("🟡 <y>You don't have your own town yet.</y>")
+                pass
+                # self.log.info("🟡 <y>You don't have your own town yet.</y>")
 
             return True
         except Exception as e:
