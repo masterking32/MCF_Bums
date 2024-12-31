@@ -20,6 +20,7 @@ from .core.Tasks import Tasks
 from .core.Friends import Friends
 from .core.NewYearAchievement import NewYearAchievement
 from .core.Slots import Slots
+from .core.Town import Town
 
 MasterCryptoFarmBot_Dir = os.path.dirname(
     os.path.dirname(os.path.abspath(__file__ + "/../../"))
@@ -82,6 +83,9 @@ class FarmBot:
                 return
             
             self.profile.get_map_info()
+
+            self.town = Town(self.log, self.http, self.mcf_api)
+            self.town.get_my_town()
             
             self.profile.get_bot_message_id()
 
