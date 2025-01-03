@@ -66,7 +66,8 @@ class City:
             if owned <= 0:
                 return True
             while owned > 0:
-                if not self.store._open_advent_box():
+                count = 10 if owned >= 10 else owned
+                if not self.store._open_advent_box(count):
                     break
                 owned -= 1
                 self.log.info(

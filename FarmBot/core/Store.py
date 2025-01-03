@@ -144,10 +144,10 @@ class Store:
         )
         return advent_box
 
-    def _open_advent_box(self):
+    def _open_advent_box(self, count: int):
         try:
             payload = {
-                "count": 10,
+                "count": count,
             }
             resp: dict = self.http.post(
                 url=f"miniapps/api/active/christmas_spin",
