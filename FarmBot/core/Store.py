@@ -126,6 +126,54 @@ class Store:
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
 
+    def _get_advent_box(self):
+        raw_props = self._get_props("spin")
+        props: list[StoreModel.StoreProp] = []
+
+        if not raw_props:
+            return False
+
+        props = [StoreModel.StoreProp(prop) for prop in raw_props if prop is not None]
+        if not props:
+            return False
+
+        advent_box = next(
+            prop
+            for prop in props
+            if prop.title == "Advent Rewards" and prop.desc == "Advent Rewards"
+        )
+        return advent_box
+
+    def _open_advent_box(self):
+        try:
+            payload = {
+                "count": 10,
+            }
+            resp: dict = self.http.post(
+                url=f"miniapps/api/active/christmas_spin",
+                data=payload,
+                display_errors=True,
+            )
+
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            if resp and (
+                resp.get("code") != 0 or "data" not in resp or resp.get("msg") != "OK"
+            ):
+                error_message = resp.get(
+                    "msg", "Unknown error occurred while fetching prop data."
+                )
+                raise Exception(error_message)
+
+            return resp.get("data", None)
+
+        except Exception as e:
+            self.log.error(
+                f"<r>❌ Failed to open advent box for <c>{self.account_name}</c> ...</r>"
+            )
+            self.log.error(f"<r>❌ {str(e)}</r>")
+            return None
+
     def _make_prop_order(self, sell_id: int):
         try:
             payload = {

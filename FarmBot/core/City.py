@@ -56,6 +56,32 @@ class City:
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
 
+    def get_advent_box(self):
+        try:
+            self.log.info(f"<g>🔍 Checking for advent boxes...</g>")
+            advent_box = self.store._get_advent_box()
+            if not advent_box:
+                return False
+            owned = advent_box.stock
+            if owned <= 0:
+                return True
+            while owned > 0:
+                if not self.store._open_advent_box():
+                    break
+                owned -= 1
+                self.log.info(
+                    f"🟢 <g>Advent box openned. Remaining: <y>{owned}</y></g>"
+                )
+                time.sleep(random.randint(1, 2))
+
+            return True
+        except Exception as e:
+            self.log.error(
+                f"<r>❌ Failed to get advent boxes for <c>{self.mcf_api.account_name}</c>.</r>"
+            )
+            self.log.error(f"<r>❌ {str(e)}</r>")
+            return False
+
     def get_free_animas(self):
         if not utils.getConfig("auto_free_animals", True):
             self.log.info(f"<y>⚙️ Auto-check for free animals is disabled.</y>")

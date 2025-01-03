@@ -126,9 +126,11 @@ class FarmBot:
             self.city.do_daily_combo()
             await asyncio.sleep(random.randint(1, 2))
 
-            if self.mcf_api.can_use(1735862400): # 	Fri Jan 03 2025 00:00:00 GMT+0000
-                self.nya = NewYearAchievement(self.log, self.http, self.mcf_api, self.profile)
-                await self.nya.perform_days()
+            # if self.mcf_api.can_use(1735862400): # 	Fri Jan 03 2025 00:00:00 GMT+0000
+            #     self.nya = NewYearAchievement(self.log, self.http, self.mcf_api, self.profile)
+            #     await self.nya.perform_days()
+            self.city.get_advent_box()
+
 
             self.slots = Slots(self.log, self.http, self.mcf_api, self.profile)
             self.slots.spin_slots()
