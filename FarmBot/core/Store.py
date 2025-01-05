@@ -210,7 +210,7 @@ class Store:
                 resp.get("code") != 0 or "data" not in resp or resp.get("msg") != "OK"
             ):
                 error_message = resp.get(
-                    "msg", "Unknown error occurred while openning invote box."
+                    "msg", "Unknown error occurred while openning invite box."
                 )
                 raise Exception(error_message)
             
@@ -229,7 +229,7 @@ class Store:
 
         except Exception as e:
             self.log.error(
-                f"<r>❌ Failed to open advent box for <c>{self.account_name}</c> ...</r>"
+                f"<r>❌ Failed to open invite box for <c>{self.account_name}</c> ...</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return None
