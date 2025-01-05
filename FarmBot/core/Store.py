@@ -206,13 +206,6 @@ class Store:
 
             if not resp:
                 raise Exception("RESPONSE_IS_NULL")
-            if resp and (
-                resp.get("code") != 0 or "data" not in resp or resp.get("msg") != "OK"
-            ):
-                error_message = resp.get(
-                    "msg", "Unknown error occurred while openning invite box."
-                )
-                raise Exception(error_message)
             
             rewards = resp.get("rewardLists")
                     
