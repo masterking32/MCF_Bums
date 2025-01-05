@@ -130,6 +130,7 @@ class FarmBot:
             #     self.nya = NewYearAchievement(self.log, self.http, self.mcf_api, self.profile)
             #     await self.nya.perform_days()
             self.city.get_advent_box()
+            self.city.get_invite_box()
 
 
             self.slots = Slots(self.log, self.http, self.mcf_api, self.profile)

@@ -83,6 +83,31 @@ class City:
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
 
+    def get_invite_box(self):
+        try:
+            self.log.info(f"<g>🔍 Checking for invite boxes...</g>")
+            invite_box = self.store._get_invite_box()
+            if not invite_box:
+                return False
+            owned = invite_box.stock
+            if owned <= 0:
+                return True
+            while owned > 0:
+                count = 10 if owned >= 10 else owned
+                if not self.store._open_invite_box(count, invite_box.prop_id):
+                    break
+                owned -= count
+                self.log.info(f"🟢 <g>Invite boxes remaining: <y>{owned}</y></g>")
+                time.sleep(random.randint(1, 2))
+
+            return True
+        except Exception as e:
+            self.log.error(
+                f"<r>❌ Failed to get invite boxes for <c>{self.mcf_api.account_name}</c>.</r>"
+            )
+            self.log.error(f"<r>❌ {str(e)}</r>")
+            return False
+
     def get_free_animas(self):
         if not utils.getConfig("auto_free_animals", True):
             self.log.info(f"<y>⚙️ Auto-check for free animals is disabled.</y>")

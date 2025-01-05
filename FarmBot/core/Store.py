@@ -143,6 +143,24 @@ class Store:
             if prop.title == "Advent Rewards" and prop.desc == "Advent Rewards"
         )
         return advent_box
+    
+    def _get_invite_box(self):
+        raw_props = self._get_props("spin")
+        props: list[StoreModel.StoreProp] = []
+
+        if not raw_props:
+            return False
+
+        props = [StoreModel.StoreProp(prop) for prop in raw_props if prop is not None]
+        if not props:
+            return False
+
+        invite_box = next(
+            prop
+            for prop in props
+            if prop.title == "Invite Box" and prop.desc == "Invite Box"
+        )
+        return invite_box
 
     def _open_advent_box(self, count: int):
         try:
@@ -166,6 +184,48 @@ class Store:
                 raise Exception(error_message)
 
             return resp.get("data", None)
+
+        except Exception as e:
+            self.log.error(
+                f"<r>❌ Failed to open advent box for <c>{self.account_name}</c> ...</r>"
+            )
+            self.log.error(f"<r>❌ {str(e)}</r>")
+            return None
+        
+    def _open_invite_box(self, count: int, prop_id: int):
+        try:
+            payload = {
+                "count": count,
+                "propId": prop_id,
+            }
+            resp: dict = self.http.post(
+                url=f"miniapps/api/game_spin/Start",
+                data=payload,
+                display_errors=True,
+            )
+
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            if resp and (
+                resp.get("code") != 0 or "data" not in resp or resp.get("msg") != "OK"
+            ):
+                error_message = resp.get(
+                    "msg", "Unknown error occurred while openning invote box."
+                )
+                raise Exception(error_message)
+            
+            rewards = resp.get("rewardLists")
+                    
+            if rewards:
+                for reward in rewards:
+                    name = reward.get("name")
+                    amount = reward.get("num")
+                    name = "Coins" if "Coins" in name else name
+                    amount = butils.round_int(amount) if isinstance(amount, int) else amount
+                    self.log.info(f"<g>🟢 Invite box reward: <c>{name}</c> <y>x{amount}</y></g>")
+            
+
+            return True
 
         except Exception as e:
             self.log.error(
