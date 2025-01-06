@@ -129,7 +129,7 @@ class FarmBot:
             # if self.mcf_api.can_use(1735862400): # 	Fri Jan 03 2025 00:00:00 GMT+0000
             #     self.nya = NewYearAchievement(self.log, self.http, self.mcf_api, self.profile)
             #     await self.nya.perform_days()
-            self.city.get_advent_box()
+            # self.city.get_advent_box()
             self.city.get_invite_box()
 
 
