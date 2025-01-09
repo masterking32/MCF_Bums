@@ -18,7 +18,7 @@ from .core.Upgrades import Upgrades
 from .core.City import City
 from .core.Tasks import Tasks
 from .core.Friends import Friends
-from .core.NewYearAchievement import NewYearAchievement
+from .core.AdventCalendar import AdventCalendar
 from .core.Slots import Slots
 from .core.Town import Town
 
@@ -126,9 +126,10 @@ class FarmBot:
             self.city.do_daily_combo()
             await asyncio.sleep(random.randint(1, 2))
 
-            # if self.mcf_api.can_use(1735862400): # 	Fri Jan 03 2025 00:00:00 GMT+0000
-            #     self.nya = NewYearAchievement(self.log, self.http, self.mcf_api, self.profile)
-            #     await self.nya.perform_days()
+            if self.mcf_api.can_use(1738368000): # Sat Feb 01 2025 00:00:00 GMT+0000
+                self.adv = AdventCalendar(self.log, self.http, self.mcf_api, self.profile)
+                self.adv.perform_advent_calendar(202501)
+
             # self.city.get_advent_box()
             self.city.get_invite_box()
 
