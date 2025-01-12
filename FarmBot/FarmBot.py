@@ -150,6 +150,12 @@ class FarmBot:
                 "Level: " + str(self.profile.game_profile.current_level),
                 self.profile.game_profile.current_balance,
             )
+
+            inc_display_data(
+                "display_data.json",
+                "success_accounts",
+                {"title": "Successfull farm finished accounts", "name": "count"},
+            )
         except Exception as e:
             add_account_to_display_data(
                 "display_data_bot_issues.json", self.account_name
