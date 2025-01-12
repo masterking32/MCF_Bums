@@ -27,7 +27,7 @@ MasterCryptoFarmBot_Dir = os.path.dirname(
 )
 sys.path.append(MasterCryptoFarmBot_Dir)
 
-from utilities.utilities import getConfig
+from utilities.utilities import add_account_to_display_data, getConfig
 
 
 class FarmBot:
@@ -75,18 +75,21 @@ class FarmBot:
             auth = Auth(self.log, self.http, self.mcf_api)
 
             if not auth.authorize():
+                add_account_to_display_data(
+                    "display_data_bot_issues.json", self.account_name
+                )
                 return
 
             self.profile = Profile(self.log, self.http, self.mcf_api)
 
             if not self.profile.get_game_data():
                 return
-            
+
             self.profile.get_map_info()
 
             self.town = Town(self.log, self.http, self.mcf_api, self.profile)
             self.town.get_my_town()
-            
+
             self.profile.get_bot_message_id()
 
             await asyncio.sleep(random.randint(1, 2))
@@ -126,13 +129,14 @@ class FarmBot:
             self.city.do_daily_combo()
             await asyncio.sleep(random.randint(1, 2))
 
-            if self.mcf_api.can_use(1738368000): # Sat Feb 01 2025 00:00:00 GMT+0000
-                self.adv = AdventCalendar(self.log, self.http, self.mcf_api, self.profile)
+            if self.mcf_api.can_use(1738368000):  # Sat Feb 01 2025 00:00:00 GMT+0000
+                self.adv = AdventCalendar(
+                    self.log, self.http, self.mcf_api, self.profile
+                )
                 self.adv.perform_advent_calendar(202501)
 
             # self.city.get_advent_box()
             self.city.get_invite_box()
-
 
             self.slots = Slots(self.log, self.http, self.mcf_api, self.profile)
             self.slots.spin_slots()
@@ -140,9 +144,16 @@ class FarmBot:
             self.upgrades = Upgrades(self.log, self.http, self.mcf_api, self.profile)
             self.upgrades.perform_upgrades()
 
-            
-
+            add_account_to_display_data(
+                "display_data_success_accounts.json",
+                self.account_name,
+                "Level: " + str(self.profile.game_profile.current_level),
+                self.profile.game_profile.current_balance,
+            )
         except Exception as e:
+            add_account_to_display_data(
+                "display_data_bot_issues.json", self.account_name
+            )
             self.log.error(
                 f"⭕ <r>Failed to farm for account <c>{self.account_name}</c>!</r>"
             )
