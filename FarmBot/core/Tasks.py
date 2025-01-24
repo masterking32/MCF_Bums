@@ -79,6 +79,7 @@ class Tasks:
                         "TON FEST: Get your EARLY BIRD ticket now",
                         "Gift your friend a TON Fest ticket for New Year!",
                     ]
+                    and task.id not in [375, 388, 389]
                 )
             ]
 
