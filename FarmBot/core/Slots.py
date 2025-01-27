@@ -161,7 +161,7 @@ class Slots:
             spend = next(e for e in self.energy_options if e <= energy_crnt)
             energy_crnt -= spend
             self.log.info(
-                f"<g>🔋 Spending <c>{butils.round_int(spend)}</c> energy.</g>"
+                f"<g>🔋 Spending <c>{butils.round_int(spend)}</c> energy. Remaining: {butils.round_int(energy_crnt)}</g>"
             )
             if not self._spin_slots(spend):
                 return False
