@@ -14,7 +14,7 @@ import asyncio
 class DayMdl:
     id: Optional[int] = None
     type: Optional[str] = None
-    auth_type: Optional[str] = None
+    operate_type: Optional[str] = None
     prop_sell_id: Optional[str] = None
     jump_url: Optional[str] = None
     date: Optional[str] = None
@@ -32,7 +32,7 @@ class DayMdl:
         return cls(
             id=data.get("id", -1),
             type=data.get("type", ""),
-            auth_type=data.get("authType", ""),
+            operate_type=data.get("operateType", ""),
             prop_sell_id=data.get("propSellId", ""),
             jump_url=data.get("jumpUrl", ""),
             date=data.get("date", ""),
@@ -167,13 +167,13 @@ class AdventCalendar:
             if not day.is_openned:
                 if self.open_day(day, date):
                     day.is_openned = True
-                    if day.auth_type not in ["send_prop_shop", "invite"]:
+                    if day.operate_type not in ["send_prop_shop", "invite"]:
                         continue
             if day.is_openned and not day.is_finished:
-                if day.auth_type == "send_prop_shop":
+                if day.operate_type == "send_prop_shop":
                     self.finish_day(day, date)
                     continue
-                if day.auth_type == "invite":
+                if day.operate_type == "invite":
                     if day.finish_num >= day.target_num:
                         self.finish_day(day, date)
                         continue
