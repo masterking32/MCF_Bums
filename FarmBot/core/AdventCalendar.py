@@ -167,10 +167,10 @@ class AdventCalendar:
             if not day.is_openned:
                 if self.open_day(day, date):
                     day.is_openned = True
-                    if day.operate_type not in ["send_prop_shop", "invite"]:
+                    if day.operate_type not in ["send_prop", "invite"]:
                         continue
             if day.is_openned and not day.is_finished:
-                if day.operate_type == "send_prop_shop":
+                if day.operate_type == "send_prop":
                     self.finish_day(day, date)
                     continue
                 if day.operate_type == "invite":
