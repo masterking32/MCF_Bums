@@ -106,8 +106,8 @@ class Store:
                 )
                 if not sell_id:
                     continue
-                if not self._make_prop_order(sell_id):
-                    continue
+                # if not self._make_prop_order(sell_id):
+                #     continue
                 self.log.info(f"<g>✅ Successfully</g> ordered <y>{prop.desc}</y> ...")
                 time.sleep(random.randint(1, 2))
                 if not self._apply_prop(
