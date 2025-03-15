@@ -43,6 +43,7 @@ class Auth:
                 "invitationCode": "",
                 "initData": self.mcf_api.web_app_query,
                 "act": "",
+                "platform": self.mcf_api.platform,
             }
             if self.mcf_api.ref_code != "":
                 ref_code = self.mcf_api.tgAccount.ReferralToken

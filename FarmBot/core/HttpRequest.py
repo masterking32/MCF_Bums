@@ -253,6 +253,9 @@ class HttpRequest:
             url = self._fix_url(url, domain)
             default_headers = self._get_default_headers()
 
+            if "/telegram_auth" in url:
+                default_headers["X-Platform"] = ""
+
             if headers is None:
                 headers = {}
 
@@ -430,6 +433,9 @@ class HttpRequest:
                 '"Chromium";v="128", "Not;A=Brand";v="24", "Android WebView";v="128"'
             )
 
+        default_headers["X-Platform"] = "telegram_android" if "android" in self.user_agent.lower() else "telegram_ios"
+        default_headers["X-Platform-Version"] = "1.0"
+
         if headers:
             for key, value in headers.items():
                 default_headers[key] = value
@@ -442,7 +448,7 @@ class HttpRequest:
         default_headers["Accept"] = "*/*"
         default_headers["Accept-Encoding"] = "en,ru-RU;q=0.9,ru;q=0.8,en-US;q=0.7"
         default_headers["Access-Control-Request-Method"] = method.upper()
-        default_headers["Access-Control-Request-Headers"] = "authorization"
+        default_headers["Access-Control-Request-Headers"] = "authorization,x-platform,x-platform-version"
 
         if headers:
             for key, value in headers.items():

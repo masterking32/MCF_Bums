@@ -78,6 +78,12 @@ class Tasks:
                         "Play Dropee and win daily",
                         "TON FEST: Get your EARLY BIRD ticket now",
                         "Gift your friend a TON Fest ticket for New Year!",
+                        "BUILD A BUM'S HOUSE INCITY HOLDER",
+                        "Get Uncommon Duck at DUCK x MY x DUCK",
+                        "Stake NFT and buy upgrade energy level on sFOMO",
+                        "Boost Gift Box Community",
+                        "COOK PROBIE’S (LEVEL 2) DONOT",
+                        "Pay for Nothing - be early adopter",
                     ]
                     and task.id not in [375, 388, 389]
                 )

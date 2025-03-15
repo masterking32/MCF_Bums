@@ -13,6 +13,7 @@ class MCFAPI:
         proxy,
         tgAccount,
         web_app_query,
+        user_agent: str,
     ):
         self.log = log
         self.bot_globals = bot_globals
@@ -23,6 +24,7 @@ class MCFAPI:
         self.license_key = self.bot_globals.get("license", None)
         self.start_param = ""
         self.ref_code = ""
+        self.platform = "telegram_android" if "android" in user_agent.lower() else "telegram_ios"
 
         if self.tgAccount is not None:
             self.ref_code = self.tgAccount.ReferralToken

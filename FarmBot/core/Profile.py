@@ -109,7 +109,7 @@ class Profile:
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return False
-        
+
     def get_map_info(self):
         try:
             resp: dict = self.http.get(
@@ -124,7 +124,7 @@ class Profile:
                     "msg", "Unknown error occurred while getting map info."
                 )
                 raise Exception(error_message)
-            
+
             self.active_map = resp.get("data", {}).get("activeMap")
 
             return True
@@ -303,9 +303,7 @@ class Profile:
 
     def get_bot_message_id(self, type="hbb"):
         try:
-            self.log.info(
-                f"🟡 <y>Getting bot message id ... </y>"
-            )
+            self.log.info(f"🟡 <y>Getting bot message id ... </y>")
             payload = {
                 "type": type,
             }
@@ -330,6 +328,66 @@ class Profile:
         except Exception as e:
             self.log.error(
                 f"<r>❌ Failed get bot message id <c>{self.account_name}</c>!</r>"
+            )
+            self.log.error(f"<r>❌ {str(e)}</r>")
+            return None
+
+    def check_free_medals(self):
+        try:
+            payload = {
+                "type": "medal_daily_reward",
+            }
+            resp: dict = self.http.post(
+                url="miniapps/api/user_game_level/getActiveInfo",
+                data=payload,
+                display_errors=True,
+            )
+
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+                error_message = resp.get(
+                    "msg", "Unknown error occurred while checking free medals."
+                )
+                raise Exception(error_message)
+
+            countdown = resp.get("data").get("getFreeCountDown")
+            if countdown > 0:
+                self.log.info(f"🟡 <y>Free medals not available right now</y>")
+                return False
+            else:
+                return True
+        except Exception as e:
+            self.log.error(
+                f"<r>❌ Failed check free medals <c>{self.account_name}</c>!</r>"
+            )
+            self.log.error(f"<r>❌ {str(e)}</r>")
+            return None
+
+    def claim_free_medals(self):
+        try:
+            self.log.info(f"🟡 <y>Attempt to claim free medals</y>")
+            payload = {
+                "type": "medal_daily_reward",
+            }
+            resp: dict = self.http.post(
+                url="miniapps/api/user_game_level/getActiveReward",
+                data=payload,
+                display_errors=True,
+            )
+
+            if not resp:
+                raise Exception("RESPONSE_IS_NULL")
+            if resp and (resp.get("code") != 0 or resp.get("msg") != "OK"):
+                error_message = resp.get(
+                    "msg", "Unknown error occurred while claiming free medals."
+                )
+                raise Exception(error_message)
+
+            self.log.info(f"🟢 <g>Free medals claimed</g>")
+        except Exception as e:
+            self.log.error(
+                f"<r>❌ Failed claim free medals <c>{self.account_name}</c>!</r>"
             )
             self.log.error(f"<r>❌ {str(e)}</r>")
             return None

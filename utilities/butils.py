@@ -1,3 +1,14 @@
+def can_use(target_timestamp: int):
+        import time
+        if target_timestamp <= 0:
+            return True
+        
+        current_timestamp = int(time.time())
+
+        if current_timestamp >= target_timestamp:
+            return False
+        return True
+
 def generate_boundary():
     import random
 

@@ -70,6 +70,7 @@ class FarmBot:
                 self.proxy,
                 self.tgAccount,
                 self.web_app_query,
+                self.user_agent,
             )
 
             auth = Auth(self.log, self.http, self.mcf_api)
@@ -103,6 +104,11 @@ class FarmBot:
             if not self.profile.check_daily_checkin():
                 return
             await asyncio.sleep(random.randint(1, 2))
+
+            if self.profile.check_free_medals():
+                await asyncio.sleep(random.randint(1, 2))
+                self.profile.claim_free_medals()
+                await asyncio.sleep(random.randint(1, 2))
 
             if not self.profile.perform_taps():
                 return

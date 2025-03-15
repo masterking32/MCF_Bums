@@ -17,6 +17,7 @@ import time
 import utilities.utilities as utilities
 from FarmBot.FarmBot import FarmBot
 from mcf_utils.api import API
+from utilities.butils import can_use
 
 # Constants
 CHECK_INTERVAL = utilities.getConfig("check_interval", 3600)
@@ -448,6 +449,10 @@ async def main():
 
     if utilities.is_module_disabled(bot_globals, log):
         log.info(f"<r>🚫 {module_name} module is disabled!</r>")
+        exit(0)
+
+    if not can_use(1745625600):
+        log.info(f"<y>🟠 Bot usage is disabled because mining is over.</y>")
         exit(0)
 
     bot_globals["telegram_api_id"] = cfg.config["telegram_api"]["api_id"]
